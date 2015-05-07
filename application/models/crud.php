@@ -210,8 +210,8 @@ CREATE TABLE IF NOT EXISTS `Courses` (
     `CourseID` char(10) NOT NULL, 
     `CourseName` varchar(128) NOT NULL,
     `TeacherID` char(10) NOT NULL,
-    `Type` varchar(128) NOT NULL,
-    `State` int(1) NOT NULL,
+    `TypeID` varchar(128) NOT NULL, //课程类型，与courseType关联
+    `State` int(1) NOT NULL,//课程状态，0:off, 1:on, 1:done
     `InfoFile` varchar(128) NOT NULL,
     `Duration` time NOT NULL,
     `SubmitLimit` int(1) NOT NULL,

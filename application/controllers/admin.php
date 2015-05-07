@@ -27,11 +27,9 @@ class Admin extends CI_Controller {
 		$teacher = $this->crud->count_by_type("users","Type","1");
 		$student = $this->crud->count_by_type("users","Type","2");
 		//查询课程信息	
-		$CourseOff = $this->crud->count_by_type("courses","Type","0");
-		$CourseOn = $this->crud->count_by_type("courses","Type","1");
-		$CourseDone = $this->crud->count_by_type("courses","Type","2");
-		//$CourseOn = $this->crud->count_by_type('courses','Type','1');
-		//$CourseDone = $this->crud->count_by_type('courses','Type','2');
+		$CourseOff = $this->crud->count_by_type("courses","State","0");
+		$CourseOn = $this->crud->count_by_type("courses","State","1");
+		$CourseDone = $this->crud->count_by_type("courses","State","2");
 		//查询镜像信息
 		$Image = $this->crud->count_all('images');
 		$data = array('NAdmin' => $admin,'NTeacher' => $teacher,'NStudent' => $student,
@@ -258,15 +256,16 @@ class Admin extends CI_Controller {
 		//获取教师ID和Name对;
 		//获取课程类型ID和Name对;
 		//$teacher = $this->crud->
-		$findUser = $this->crud->search_by_column($column,$condition,$type);
-		$this->load->view('/admin/course/courseCreate',);
+		$types = $this->crud->
+		$teachers = $this->crud->search_by_column($column,$condition,$type);
+		$this->load->view('/admin/course/courseCreate',array('teachers'=>$teachers,'types'=>$types));
 	}
 	function create_course_action(){
 		$this->load->model('crud');
 		$newType = array('TypeName'=>$_POST['typeName'],'TypeDesc'=>$_POST['Description']);
 		$this->crud->create("courseType",$newType);
 		$courseType = $this->crud->read_all("coursetype");
-		$this->load->view("/admin/course/courseType",array('data' =>$courseType));
+		$this->load->view("/admin/course/courseType",array('data'=>$courseType));
 	}
 
 	//delete course
