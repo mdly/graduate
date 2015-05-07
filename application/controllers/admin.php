@@ -99,6 +99,7 @@ class Admin extends CI_Controller {
 	}
 
 	function search_user(){
+		//未用，关键是$type的获取。
 		//搜索可以直接从数据库中搜索，或者从搜索到的数组中搜索；
 		//两者的区别在于哪个的速度快，
 		//另外，对于用户输入的关键字，如何判断在词条中？子串？
@@ -169,7 +170,7 @@ class Admin extends CI_Controller {
 	function create_user_action(){
 		$this->load->model('crud');
 		$newUser = array('UserNum'=>$_POST['userNum'],'UserName'=>$_POST['userName'],'Password'=>md5($_POST['password']),'Gender'=>$_POST['Gender'],'Email'=>$_POST['Email'],'Section'=>$_POST['Section'],'Type'=>$_POST['Type']);
-		$this->crud->insert_user($newUser);
+		$this->crud->create("users",$newUser);
 		$user = $this->crud->read_user_all();
 		$this->load->view('/admin/user/userManager',array('data'=>$user) );
 	}
@@ -210,14 +211,75 @@ class Admin extends CI_Controller {
 	//show the index page:
 	function course_manager() {
 		$this->load->model("crud");
-		//查询课程类别
-		$courseType = $this->crud->select_course_type();
-		$this->load->view('/admin/courseManager',array('courseType'=>$courseType));
+		$course = $this->crud->read_course_overview();
+		$this->load->view("/admin/course/courseManager",array('data' =>$course));
 		// 载入CI的session库
 	}
-	//1.create course type
-	function create_course_type(){
+	//course type
+	function show_courseType(){
+		$this->load->model("crud");
+		$courseType = $this->crud->read_all("coursetype");
+		$this->load->view("/admin/course/courseType",array('data' =>$courseType));
+	}
+	function create_courseType(){
+		$this->load->view('/admin/course/courseTypeCreate');
+	}
+	function create_courseType_action(){
+		$this->load->model('crud');
+		$newType = array('TypeName'=>$_POST['typeName'],'TypeDesc'=>$_POST['Description']);
+		$this->crud->create("courseType",$newType);
+		$courseType = $this->crud->read_all("coursetype");
+		$this->load->view("/admin/course/courseType",array('data' =>$courseType));
+	}
+	function delete_courseType(){
+		$this->load->model("crud");
+		if(!empty($_POST["deleteCourseType"])){
+			$type = $_POST["deleteCourseType"];
+			for($i=0; $i< count($type); $i++){
+				$this->load->model("crud");
+				$this->crud->delete("coursetype","TypeID",$type[$i]);
+			}
+		}
+		$courseType = $this->crud->read_all("coursetype");
+		$this->load->view("/admin/course/courseType",array('data'=>$courseType));
+	}
+	//show course list by type
+	function show_course_overview(){
+		$this->load->model("crud");
+		$selectType = $_POST["courseType"];
+		$course = $this->crud->read_course_overview("$selectType");
+		$this->load->view("/admin/course/courseManager",array('data'=>$course));
+	}
+	//还需要添加coursetype的添加、删除、编辑操作。
 
+	function create_course(){
+		$this->load->model("crud");
+		$type = "1";
+		//获取教师ID和Name对;
+		//获取课程类型ID和Name对;
+		//$teacher = $this->crud->
+		$findUser = $this->crud->search_by_column($column,$condition,$type);
+		$this->load->view('/admin/course/courseCreate',);
+	}
+	function create_course_action(){
+		$this->load->model('crud');
+		$newType = array('TypeName'=>$_POST['typeName'],'TypeDesc'=>$_POST['Description']);
+		$this->crud->create("courseType",$newType);
+		$courseType = $this->crud->read_all("coursetype");
+		$this->load->view("/admin/course/courseType",array('data' =>$courseType));
+	}
+
+	//delete course
+	function delete_course(){
+		if(!empty($_POST["deleteCourse"])){
+			$courses = $_POST["deleteCourse"];
+			for($i=0; $i< count($courses); $i++){
+				$this->load->model("crud");
+				$this->crud->delete("courses","Num",$courses[$i]);
+			}
+		}
+		$course = $this->crud->read_course_overview("$selectType");
+		$this->load->view("/admin/course/courseManager",array('data' =>$course));
 	}
 
 
@@ -289,8 +351,8 @@ class Admin extends CI_Controller {
 		}
 		// 载入CI的session库
 	}
-	function image_manager() {		
-		$this->load->view('/admin/imageManager');
+	function image_manager() {
+		$this->load->view('/admin/image/imageManager');
 		// 载入CI的session库
 	}
 }

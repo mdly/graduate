@@ -38,6 +38,7 @@ class Crud extends CI_Model{
 		return $query->result();
 	}
 	function read_some_line($tableName,$colName,$colValue){
+		//for detailed information
 		$this->db->select("*");
 		$this->db->from($tableName);
 		$this->db->where($colName,$colValue);
@@ -87,6 +88,17 @@ class Crud extends CI_Model{
 		$query = $this->db->get();
 		return $query->result();
 	}
+	//only for course(we just need courseType)
+	function read_course_overview($type=""){
+		//$this->db->select("")
+		$this->db->select("CourseID,CourseName,TeacherID,State");
+		$this->db->from("courses");
+		if($type){$this->db->where("Type",$type);}		
+		$query = $this->db->get();
+		return $query->result();
+	}
+
+
 
 
 
