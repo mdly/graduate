@@ -6,6 +6,24 @@ class Crud extends CI_Model{
 	}
 
 
+
+	//function should be divided into 4 parts, the base part should be the common functions about db operation
+	//and the other 3 parts should about user, course, image.
+	//the base function:
+	function create_record($table,$record){
+		$this->db->insert($table,$record);
+	}
+	//read record:
+	//there should be many different functions for read operation:
+	//1.read all columns  by no conditions -->coursetype list, -->image list
+	//2.read some columns by no conditions -->course overview list, all-user list
+	//3.read all columns by one condition -->course info, user info
+	//4.read some columns by one condition -->course overview based on type, user overview based on type
+	//5.read all columns by some conditions 
+	//6.read some columns by some conditions
+	//this part should be included in seperated crud models
+
+
 	//common function, can be used for users, courses and images.
 	//every section should include crud --> create(insert), read(select), update(update), delete(delete) and count number functon
 	//0.count function
@@ -220,6 +238,7 @@ CREATE TABLE IF NOT EXISTS `Courses` (
     `StopTime` datetime,
     `Location` varchar(128),
     `ImageID` varchar(128),
+    `Created` int(1),
     PRIMARY KEY (`CourseID`)) 
     ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1
 //镜像表

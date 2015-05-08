@@ -40,19 +40,17 @@
                         <div class="table-responsive">
                             <div><br></div>
                             <div>
-                                <form class="form-inline" method="post" action="<?php echo site_url('/admin/search_user_all')?>">
+                                <form class="form-inline" method="post" action="<?php echo site_url('/admin/show_course_overview')?>">
                                     <div class="col-xs-6">
-                                        <div class="input-group">
-                                            <select class="form-control" name="CourseType">
+                                        <div class="input-group">                                            
+                                            <select class="form-control" name="courseType">
+                                                <option value = "all">所有课程</option>
                                                 <?php
-                                                    for($i=0;$i<count($CourseType);$i++){
-                                                        echo "<option value=".$CourseType->TypeName.">".$CourseType->TypeName."</option>";
+                                                    for($i=0;$i<count($courseType);$i++){
+                                                        echo "<option value=".$courseType[$i]->TypeID.">".$courseType[$i]->TypeName."</option>";
                                                     }
                                                 ?>
                                             </select>
-                                        </div>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="所有类型" name="courseType">
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default" type="submit">查看</button>
                                             </span>
@@ -62,7 +60,7 @@
                                         <a class="btn btn-default" href="<?php echo site_url('/admin/show_courseType')?>" role="button">查看课程类型</a>
                                     </div>
                                     <div class="col-xs-3">
-                                        <a class="btn btn-default" href="<?php echo site_url('/admin/show_course_overview')?>" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>创建新课程</a>
+                                        <a class="btn btn-default" href="<?php echo site_url('/admin/')?>" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>创建新课程</a>
                                     </div>
                                 </form>
                                 

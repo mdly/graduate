@@ -210,7 +210,8 @@ class Admin extends CI_Controller {
 	function course_manager() {
 		$this->load->model("crud");
 		$course = $this->crud->read_course_overview();
-		$this->load->view("/admin/course/courseManager",array('data' =>$course));
+		$courseType = $this->crud->read_all("coursetype");
+		$this->load->view("/admin/course/courseManager",array('data' =>$course,'courseType'=>$courseType));
 		// 载入CI的session库
 	}
 	//course type
@@ -246,10 +247,16 @@ class Admin extends CI_Controller {
 		$this->load->model("crud");
 		$selectType = $_POST["courseType"];
 		$course = $this->crud->read_course_overview("$selectType");
-		$this->load->view("/admin/course/courseManager",array('data'=>$course));
+		$courseType = $this->crud->read_all("coursetype");
+		$this->load->view("/admin/course/courseManager",array('data' =>$course,'courseType'=>$courseType));
 	}
 	//还需要添加coursetype的添加、删除、编辑操作。
 
+	function search_course(){
+		$this->load->model("crud");
+		$typeID = $_POST["CourseType"];
+		$course = $this->crud->
+	}
 	function create_course(){
 		$this->load->model("crud");
 		$type = "1";
