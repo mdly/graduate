@@ -106,6 +106,10 @@ class Crud extends CI_Model{
 		$query = $this->db->get();
 		return $query->result();
 	}
+	
+	function read_teacher_list(){
+		return $this->db->select("UserNum,UserName")->from("users")->where("Type","1")->get()->result();
+	}
 	//only for course(we just need courseType)
 	function read_course_overview($type=""){
 		//$this->db->select("")

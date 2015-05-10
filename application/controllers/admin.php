@@ -208,11 +208,91 @@ class Admin extends CI_Controller {
 	//（2）course manager
 	//show the index page:
 	function course_manager() {
-		$this->load->model("crud");
-		$course = $this->crud->read_course_overview();
-		$courseType = $this->crud->read_all("coursetype");
-		$this->load->view("/admin/course/courseManager",array('data' =>$course,'courseType'=>$courseType));
+		$this->load->model("courseCrud");
+		//read_course_list($type="0",$isAdmin="0")
+		$course = $this->courseCrud->read_course_list("0","1");
+		$courseType = $this->courseCrud->read_type_list();
+		$this->load->view("/admin/course/adminLeft",array('data' =>$course,'courseType'=>$courseType,'activeLeft'=>2,'activeTop'=>0,'selectColumn'=>"0"));
 		// 载入CI的session库
+	}
+	function show_course_list($type="0"){
+		$this->load->model("courseCrud");
+		//read_course_list($type="0",$isAdmin="0")
+		$courseType = $this->courseCrud->read_type_list();
+		$course = $this->courseCrud->read_course_list($type,"1");
+		$this->load->view("/admin/course/adminLeft",array('data' =>$course,'courseType'=>$courseType,'activeLeft'=>2,'activeTop'=>$type,'selectColumn'=>"0"));
+	}
+	function show_course_detail($courseID){
+		$this->load->model("courseCrud");
+		$this->load->model("userCrud");
+		$this->load->model("imageCrud");
+		$teachers = $this->userCrud->read_teacher_list();
+		$types = $this->courseCrud->read_type_list();
+		$images = $this->imageCrud->read_image_list();
+		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
+		$this->load->view("/admin/course/courseDetail",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'images'=>$images));
+	}
+	function search_course($type){
+		$this->load->model("courseCrud");
+		//function search_course_list($type="0",$isAdmin="0",$column,$keyword){
+		$column = $_POST["selectColumn"];
+		$keyword = $_POST["keyword"];		
+		$courseType = $this->courseCrud->read_type();
+		$course = $this->courseCrud->search_course_list($type,"1",$column,$keyword);
+		$this->load->view("/admin/course/adminLeft",array('data' =>$course,'courseType'=>$courseType,'activeLeft'=>2,'activeTop'=>$type,'selectColumn'=>$column));
+	}
+	//还需要添加coursetype的添加、删除、编辑操作。
+	function create_course(){
+		$this->load->model('userCrud');
+		$this->load->model('courseCrud');
+		$this->load->model('imageCrud');
+		//$this->load->model('crud');
+		//$usertype = "1";
+		//获取教师ID和Name对;
+		//获取课程类型ID和Name对;
+		//$teacher = $this->crud->
+		//$teachers = $this->userCrud->search_by_column($column,$condition,$type);
+		//$teachers = $this->userCrud->read_teacher_list();
+		$teachers = $this->userCrud->read_teacher_list();
+		$types = $this->courseCrud->read_type_list();
+		$images = $this->imageCrud->read_image_list();
+        if(count($images)==0) {
+        	echo "<script>alert('please create image first!')</script>";
+        	//$this->load->view('/admin/image/create_image');
+        }
+		$this->load->view('/admin/course/courseCreate',array('teachers'=>$teachers,'types'=>$types,'images'=>$images));
+	}
+	function create_course_action(){
+		//$this->load->model('crud');
+		//处理上传的文件
+		$this->load->model('courseCrud');
+		//if($_FILES["file"]){
+
+		$config['upload_path']='uploads';
+		$config['allowed_types']='pdf|doc|docx';
+		$config['max_size']='10240000';//10mb
+		$this->load->library('upload',$config);
+		$this->upload->do_upload('file');
+		if($this->upload->do_upload('file')){
+			$data = array('upload_data'=>$this->upload->data());
+			var_dump($data);
+		}else{
+			$error=array('error'=>$this->upload->display_errors());
+			var_dump($error);
+		}
+			//$file = $this->courseCrud->upload_file()->full_path;
+			//echo "this is".$_ES["file"]["type"];
+		//}
+		$newCourse = array('CourseName'=>$_POST['courseName'],'TeacherID'=>$_POST['teacherID'],
+			'TypeID'=>$_POST['typeID'],'Duration'=>$_POST['duration'],
+			'SubmitLimit'=>$_POST['submitLimit'],'CourseDesc'=>$_POST['courseDesc'],
+			'StartTime'=>$_POST['startTime'],'StopTime'=>$_POST['stopTime'],
+			'Location'=>$_POST['location'],'ImageID'=>"12345");
+		//$newType = array('TypeName'=>$_POST['typeName'],'TypeDesc'=>$_POST['Description']);
+		$this->courseCrud->create_course($newCourse);
+		$course = $this->courseCrud->read_course_list();
+		$courseType = $this->courseCrud->read_type_list();
+		$this->load->view("/admin/course/adminLeft",array('data' =>$course,'courseType'=>$courseType,'activeLeft'=>2,'activeTop'=>"0",'selectColumn'=>$column));
 	}
 	//course type
 	function show_courseType(){
@@ -242,38 +322,17 @@ class Admin extends CI_Controller {
 		$courseType = $this->crud->read_all("coursetype");
 		$this->load->view("/admin/course/courseType",array('data'=>$courseType));
 	}
+	/*
 	//show course list by type
-	function show_course_overview(){
+	function show_course_list(){
 		$this->load->model("crud");
 		$selectType = $_POST["courseType"];
-		$course = $this->crud->read_course_overview("$selectType");
+		$course = $this->crud->read_course_list("$selectType","1");
 		$courseType = $this->crud->read_all("coursetype");
 		$this->load->view("/admin/course/courseManager",array('data' =>$course,'courseType'=>$courseType));
 	}
+	*/
 	//还需要添加coursetype的添加、删除、编辑操作。
-
-	function search_course(){
-		$this->load->model("crud");
-		$typeID = $_POST["CourseType"];
-		$course = $this->crud->
-	}
-	function create_course(){
-		$this->load->model("crud");
-		$type = "1";
-		//获取教师ID和Name对;
-		//获取课程类型ID和Name对;
-		//$teacher = $this->crud->
-		$types = $this->crud->
-		$teachers = $this->crud->search_by_column($column,$condition,$type);
-		$this->load->view('/admin/course/courseCreate',array('teachers'=>$teachers,'types'=>$types));
-	}
-	function create_course_action(){
-		$this->load->model('crud');
-		$newType = array('TypeName'=>$_POST['typeName'],'TypeDesc'=>$_POST['Description']);
-		$this->crud->create("courseType",$newType);
-		$courseType = $this->crud->read_all("coursetype");
-		$this->load->view("/admin/course/courseType",array('data'=>$courseType));
-	}
 
 	//delete course
 	function delete_course(){

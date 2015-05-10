@@ -1,6 +1,6 @@
 <?php
-class CourseCrud extends CI_Model(){
-	function __construct (){
+class CourseCrud extends CI_Model{
+	function __construct(){
 		parent::__construct();
 		$this->load->database();
 	}
@@ -10,10 +10,10 @@ class CourseCrud extends CI_Model(){
 	function create_type($data){
 		$this->db->insert("coursetype",$data);
 	}
-	function read_type(){
+	function read_type_list(){
 		//read all the courseType info: TypeID, TypeName, TypeDesc
-		$query = $this->db->select("*")->from("coursetype");
-		return $query->result;
+		$query = $this->db->select("*")->from("coursetype")->get();
+		return $query->result();
 	}
 	function update_type($typeID,$newRecord){
 		//update course type info
@@ -23,19 +23,27 @@ class CourseCrud extends CI_Model(){
 		$this->db->delete("coursetype")->where("TypeID",$typeID);
 	}
 	function create_course($data){
-		$this->db->insert("courses",$date);
+		$this->db->insert("courses",$data);
 	}
-	function read_course_overview($type="",$isAdmin=""){
+	function read_course_list($type="0",$isAdmin="0"){
 		//can read course overview according to the type if the type is set 
 		//or can read all coures' overview if type is not set
 		//if the caller is admin user, the course list should include those not created successfully.
 		//if the caller is teacher or student, the course list should include only those created successfully. 
-		$this->db->select("courseID,courseName,teacherID,TypeID,State")->from("courses");
+		$this->db->select("CourseID,CourseName,TeacherID,TypeID,State,SubmitLimit,CourseDesc,Created")->from("courses");
 		if($type){$this->db->where("TypeID",$type);}
-		if($isAdmin){$this->db->where("Create","1");}
+		if($isAdmin){$this->db->where("Created","0");}
 		$query = $this->db->get();
 		return $query->result();
 	}
+	function search_course_list($type="0",$isAdmin="0",$column,$keyword){
+		$this->db->select("CourseID,CourseName,TeacherID,TypeID,State,SubmitLimit,CourseDesc,Created");
+		if($type){$this->db->where("TypeID",$type);}
+		if($isAdmin){$this->db->where("Created","1");}
+		$query = $this->db->like($column,$keyword)->from("courses")->get();
+		return $query->result();
+	}
+
 	function read_course_detail($courseID){
 		$this->db->select("*")->where("courseID",$courseID)->from("courses");
 		$query = $this->db->get();
@@ -46,6 +54,24 @@ class CourseCrud extends CI_Model(){
 	}
 	function delete_course($courseID){
 		$this->db->delete("courses")->where("courseID",$courseID);
+	}
+
+	//file function
+	function upload_file(){
+		$config['upload_path']='uploads';
+		$config['allowed_types']='pdf|doc|docx';
+		$config['max_size']='10240000';//10mb
+		$this->load->library('upload',$config);
+		$this->upload->do_upload('file');
+		if($this->upload->do_upload('file')){
+			$data = array('upload_data'=>$this->upload->data());
+			var_dump($data);
+		}else{
+			$error=array('error'=>$this->upload->display_errors());
+			var_dump($error);
+		}
+		return $this->upload->data();
+
 	}
 
 }

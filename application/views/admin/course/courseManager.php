@@ -40,7 +40,7 @@
                         <div class="table-responsive">
                             <div><br></div>
                             <div>
-                                <form class="form-inline" method="post" action="<?php echo site_url('/admin/show_course_overview')?>">
+                                <form class="form-inline" method="post" action="<?php echo site_url('/admin/show_course_list')?>">
                                     <div class="col-xs-6">
                                         <div class="input-group">                                            
                                             <select class="form-control" name="courseType">
@@ -73,13 +73,18 @@
                                                 <th>#</th>
                                                 <th>课程名</th>
                                                 <th>教师ID</th>                                   
+                                                <th>课程描述</th>                                   
+                                                <th>提交限制</th>                                   
                                                 <th>状态</th>
+                                                <th>已创建完成</th>
                                             </tr>
                                         </thead>     
                                         <tbody>
                                             <?php
                                                 for ($i=0;$i<count($data);$i++){
+                                                    echo $i;
                                                     $index = $i + 1;
+                                                    $state = ($data[$i]->State==0)?"关闭":(($data[$i]->State==1)?"开启":"完成");
                                                     //echo "<tr><th scope='row'><div class='checkbox'><label><input type='checkbox' id='blankCheckbox' value='option1' aria-label='...'></label></div></th><td>".$data[$i]->UserNum."</td><td>".$data[$i]->UserName."</th><td>".$data[$i]->Gender."</td><td>".$data[$i]->Section."</th><td>".$data[$i]->Email."</th><td>".$Type."</th><td></tr>";
                                                     echo "
                                                         <tr style='cursor:pointer'>
@@ -91,9 +96,12 @@
                                                                     </label>
                                                                 </div>
                                                             </td>
-                                                            <td><a href=".site_url('/admin/view_user').">".$data[$i]->CourseName."</a></td>
+                                                            <td><a href=".site_url('/admin/show_course_detail').">".$data[$i]->CourseName."</a></td>
                                                             <td>".$data[$i]->TeacherID."</td>
-                                                            <td>".$data[$i]->State."</td>
+                                                            <td>".$data[$i]->CourseDesc."</td>
+                                                            <td>".$data[$i]->SubmitLimit."</td>
+                                                            <td>".$state."</td>
+                                                            <td>".$data[$i]->Created."</td>
                                                         </tr>";
                                                 }
                                             ?>
