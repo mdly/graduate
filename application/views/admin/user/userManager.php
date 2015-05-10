@@ -50,7 +50,7 @@
                             <div><br></div>
 
                             <div>
-                                <form class="form-inline" method="post" action="<?php echo site_url('/admin/search_user_all')?>"> 
+                                <form class="form-inline" method="post" action="<?php echo site_url('/admin/search_course')?>"> 
                                     <div class="col-xs-8">
                                         <div class="input-group">
                                             <select class="form-control" name="selectColumn">

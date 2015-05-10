@@ -58,7 +58,7 @@
 									</div>
 									<div class="form-group">
 										<div class="col-sm-offset-2 col-sm-6" align="right">
-											<a href="<?php echo site_url('/admin/show_courseType')?>">取消</button>
+											<a href="<?php echo site_url('/admin/show_course_list')?>">取消</button>
 											<button type="submit" class="btn btn-defualt">创建新课程类型</button>
 										</div>
 									</div>                              
