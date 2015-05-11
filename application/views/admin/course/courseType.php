@@ -44,7 +44,7 @@
                                 <a class="btn btn-default" href="<?php echo site_url('/admin/course_manager')?>" role="button">返回课程列表</a>
                             </div>
                             <div>
-                                <form class="form-horizontal" method="post" action="<?php echo site_url('/admin/delete_courseType')?>">
+                                <form class="form-horizontal" method="post" action="<?php echo site_url('/admin/delete_courseType_action')?>">
                                     <table class="table table-striped table-hover">
                                         <thead>
                                             <tr>

@@ -61,7 +61,7 @@
 											<a href="<?php echo site_url('/admin/show_course_list')?>">取消</button>
 											<button type="submit" class="btn btn-defualt">创建新课程类型</button>
 										</div>
-									</div>                              
+                                    </div>                              
 								</form>  
 							</div>
 						</div>

@@ -212,7 +212,7 @@ class Admin extends CI_Controller {
 		//read_course_list($type="0",$isAdmin="0")
 		$course = $this->courseCrud->read_course_list("0","1");
 		$courseType = $this->courseCrud->read_type_list();
-		$this->load->view("/admin/course/adminLeft",array('data' =>$course,'courseType'=>$courseType,'activeLeft'=>2,'activeTop'=>0,'selectColumn'=>"0"));
+		$this->load->view("/admin/course/courseManager",array('data' =>$course,'courseType'=>$courseType,'activeLeft'=>2,'activeTop'=>0,'selectColumn'=>"0"));
 		// 载入CI的session库
 	}
 	function show_course_list($type="0"){
@@ -220,7 +220,7 @@ class Admin extends CI_Controller {
 		//read_course_list($type="0",$isAdmin="0")
 		$courseType = $this->courseCrud->read_type_list();
 		$course = $this->courseCrud->read_course_list($type,"1");
-		$this->load->view("/admin/course/adminLeft",array('data' =>$course,'courseType'=>$courseType,'activeLeft'=>2,'activeTop'=>$type,'selectColumn'=>"0"));
+		$this->load->view("/admin/course/courseManager",array('data' =>$course,'courseType'=>$courseType,'activeLeft'=>2,'activeTop'=>$type,'selectColumn'=>"0"));
 	}
 	function show_course_detail($courseID){
 		$this->load->model("courseCrud");
@@ -239,7 +239,7 @@ class Admin extends CI_Controller {
 		$keyword = $_POST["keyword"];		
 		$courseType = $this->courseCrud->read_type();
 		$course = $this->courseCrud->search_course_list($type,"1",$column,$keyword);
-		$this->load->view("/admin/course/adminLeft",array('data' =>$course,'courseType'=>$courseType,'activeLeft'=>2,'activeTop'=>$type,'selectColumn'=>$column));
+		$this->load->view("/admin/course/courseManager",array('data' =>$course,'courseType'=>$courseType,'activeLeft'=>2,'activeTop'=>$type,'selectColumn'=>$column));
 	}
 	//还需要添加coursetype的添加、删除、编辑操作。
 	function create_course(){
@@ -266,8 +266,6 @@ class Admin extends CI_Controller {
 		//$this->load->model('crud');
 		//处理上传的文件
 		$this->load->model('courseCrud');
-		//if($_FILES["file"]){
-
 		$config['upload_path']='uploads';
 		$config['allowed_types']='pdf|doc|docx';
 		$config['max_size']='10240000';//10mb
@@ -280,9 +278,6 @@ class Admin extends CI_Controller {
 			$error=array('error'=>$this->upload->display_errors());
 			var_dump($error);
 		}
-			//$file = $this->courseCrud->upload_file()->full_path;
-			//echo "this is".$_ES["file"]["type"];
-		//}
 		$newCourse = array('CourseName'=>$_POST['courseName'],'TeacherID'=>$_POST['teacherID'],
 			'TypeID'=>$_POST['typeID'],'Duration'=>$_POST['duration'],
 			'SubmitLimit'=>$_POST['submitLimit'],'CourseDesc'=>$_POST['courseDesc'],
@@ -292,7 +287,20 @@ class Admin extends CI_Controller {
 		$this->courseCrud->create_course($newCourse);
 		$course = $this->courseCrud->read_course_list();
 		$courseType = $this->courseCrud->read_type_list();
-		$this->load->view("/admin/course/adminLeft",array('data' =>$course,'courseType'=>$courseType,'activeLeft'=>2,'activeTop'=>"0",'selectColumn'=>$column));
+		$this->load->view("/admin/course/courseManager",array('data' =>$course,'courseType'=>$courseType,'activeLeft'=>2,'activeTop'=>"0",'selectColumn'=>"0"));
+	}
+
+	function delete_course_action(){
+		$this->load->model("courseCrud");
+		if(!empty($_POST["deleteCourse"])){
+			$courses = $_POST["deleteCourse"];
+			for($i=0; $i< count($courses); $i++){
+				$this->courseCrud->delete_course($courses[$i]);
+			}
+		}
+		$course = $this->courseCrud->read_course_list();
+		$courseType = $this->courseCrud->read_type_list();
+		$this->load->view("/admin/course/courseManager",array('data' =>$course,'courseType'=>$courseType,'activeLeft'=>2,'activeTop'=>"0",'selectColumn'=>"0"));
 	}
 	//course type
 	function show_courseType(){
@@ -310,7 +318,12 @@ class Admin extends CI_Controller {
 		$courseType = $this->crud->read_all("coursetype");
 		$this->load->view("/admin/course/courseType",array('data' =>$courseType));
 	}
-	function delete_courseType(){
+	function show_courseType_list(){
+		$this->load->model("courseCrud");
+		$courseType = $this->courseCrud->read_type_list();
+		$this->load->view("/admin/course/courseType",array('data' =>$courseType));	
+	}
+	function delete_courseType_action(){
 		$this->load->model("crud");
 		if(!empty($_POST["deleteCourseType"])){
 			$type = $_POST["deleteCourseType"];
@@ -322,51 +335,6 @@ class Admin extends CI_Controller {
 		$courseType = $this->crud->read_all("coursetype");
 		$this->load->view("/admin/course/courseType",array('data'=>$courseType));
 	}
-	/*
-	//show course list by type
-	function show_course_list(){
-		$this->load->model("crud");
-		$selectType = $_POST["courseType"];
-		$course = $this->crud->read_course_list("$selectType","1");
-		$courseType = $this->crud->read_all("coursetype");
-		$this->load->view("/admin/course/courseManager",array('data' =>$course,'courseType'=>$courseType));
-	}
-	*/
-	//还需要添加coursetype的添加、删除、编辑操作。
-
-	//delete course
-	function delete_course(){
-		if(!empty($_POST["deleteCourse"])){
-			$courses = $_POST["deleteCourse"];
-			for($i=0; $i< count($courses); $i++){
-				$this->load->model("crud");
-				$this->crud->delete("courses","Num",$courses[$i]);
-			}
-		}
-		$course = $this->crud->read_course_overview("$selectType");
-		$this->load->view("/admin/course/courseManager",array('data' =>$course));
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	function profile() {
 		if ($this->session->userdata('s_id')){
 			$userNum = $this->session->userdata('s_id');
@@ -417,8 +385,28 @@ class Admin extends CI_Controller {
 		// 载入CI的session库
 	}
 	function image_manager() {
-		$this->load->view('/admin/image/imageManager');
+		$this->load->view('/admin/image/imageCreate');
 		// 载入CI的session库
+	}
+	function upload_image(){
+		$this->load->model("imageCrud");
+		$config['upload_path']='upload';
+		//$config['allowed_types']='iso';
+		$config['max_size']='1024000000';
+		$config['max_width']='1024';
+		$config['max_height']='768';
+		$this->load->library('upload',$config);
+		$this->upload->do_upload();
+		$data = $this->upload->data();
+
+		if($this->upload->do_upload('imageFile')){
+			$data = array('upload_data'=>$this->upload->data());
+			var_dump($data);
+		}else{
+			$error=array('error'=>$this->upload->display_errors());
+			var_dump($error);
+		}
+		$this->load->view("/admin/image/imageManager",array("data"=>$data));
 	}
 }
 

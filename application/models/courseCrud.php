@@ -53,7 +53,7 @@ class CourseCrud extends CI_Model{
 		$this->db->update("courses",$data)->where("courseID",$courseID);
 	}
 	function delete_course($courseID){
-		$this->db->delete("courses")->where("courseID",$courseID);
+		$this->db->where("courseID",$courseID)->delete("courses");
 	}
 
 	//file function

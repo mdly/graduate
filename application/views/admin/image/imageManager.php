@@ -36,20 +36,27 @@
                         </ul>
                     </div>
                     <div class="col-xs-10">
-						<!--显示镜像列表-->
-                        <!--
-						<div>
-                            <ul class="nav nav-tabs">
-                                <li role="presentation" class="active"><a href="#">Web</a></li>
-                                <li role="presentation"><a href="#">无线</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h1>这里应该显示所有的管理员信息</h1>
-							
-                        </div>
-						-->
-                        
+                        <?php
+                        if ($data){
+                            echo $data->file_path;
+                            echo "ok";
+                        }else{
+                            echo "wrong";
+                        }
+                        ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
                     </div>
                 
             </div>

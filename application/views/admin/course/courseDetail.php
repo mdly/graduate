@@ -52,19 +52,16 @@
 										</div>
 										<div class="form-group">
 											<label for="teacherID" class="col-sm-4 control-label">教师</label>
-											<?php
-													echo count($teachers);?>
 												<div class="col-sm-4">
 												<select class="form-control" id="teacherID" name="teacherID">
 													<?php
 													for ($i=0;$i<count($teachers);$i++){
-															echo $teachers[$i]->UserNum;
-															echo $data[0]->TeacherID;
 														if ($data[0]->TeacherID==$teachers[$i]->UserNum) {
-															$select="selected='selected'";
+															echo "<option value=".$teachers[$i]->UserNum." selected='selected'>".$teachers[$i]->UserName."</option>";
 														}
-														else $select="";
-														echo "<option value=".$teachers[$i]->UserNum.$select.">".$teachers[$i]->UserName.$teachers[$i]->UserNum."</option>";
+														else{
+															echo "<option value=".$teachers[$i]->UserNum.">".$teachers[$i]->UserName."</option>";
+														}
 													}
 													?>
 												</select>
@@ -74,10 +71,16 @@
 										<div class="form-group">
 											<label for="typeID" class="col-sm-4 control-label">课程类型</label>
 												<div class="col-sm-4">
-												<select class="form-control" id="typeID" name="typeID">
+												<select class="form-control" id="typeID" name="typeID">												
 													<?php
-													for ($i=0;$i<count($types);$i++)
-														echo "<option value=".$types[$i]->TypeID.">".$types[$i]->TypeName."</option>";
+													for ($i=0;$i<count($types);$i++){
+														if ($data[0]->TypeID==$types[$i]->TypeID) {
+															echo "<option value=".$types[$i]->TypeID." selected='selected'>".$types[$i]->TypeName."</option>";
+														}
+														else{
+															echo "<option value=".$types[$i]->TypeID.">".$types[$i]->TypeName."</option>";
+														}
+													}
 													?>
 												</select>
 											</div>
@@ -89,7 +92,7 @@
 										<div class="form-group">
 											<label for="file" class="col-sm-4 control-label">课件</label>
 											<div class="col-sm-4">
-												<input type="file" class="form-control" id="file" name="file">
+												<input type="file" class="form-control" id="file" name="file" value="<?php echo $data[0]->File;?>">
 											</div>
 											<label class="colfsm-4"></label>
 										</div>
@@ -97,14 +100,15 @@
 										<div class="form-group">
 											<label for="duration" class="col-sm-4 control-label">时长</label>
 											<div class="col-sm-4">
-												<input type="time" class="form-control" id="duration" name="duration">
+												<input type="time" class="form-control" id="duration" name="duration" value="<?php echo $data[0]->Duration;?>">
 											</div>
 											<label class="col-sm-4"></label>
 										</div>
 										<div class="form-group">
 											<label for="submitLimit" class="col-sm-4 control-label">提交限制次数</label>
 											<div class="col-sm-4">
-												<input type="number" class="form-control" id="submitLimit" name="submitLimit" min="0" max="5" step="1" value="3">
+												<input type="number" class="form-control" id="submitLimit" name="submitLimit" min="0" max="5" step="1"
+												 value="<?php echo $data[0]->SubmitLimit;?>">
 											</div>
 											<label class="col-sm-4"></label>
 										</div>
@@ -112,28 +116,28 @@
 										<div class="form-group">
 											<label for="courseDesc" class="col-sm-4 control-label">课程描述</label>
 											<div class="col-sm-4">
-												<input type="text" class="form-control" id="courseDesc" name="courseDesc">
+												<input type="text" class="form-control" id="courseDesc" name="courseDesc" value="<?php echo $data[0]->CourseDesc;?>">
 											</div>
 											<label class="col-sm-4"></label>
 										</div>
 										<div class="form-group">
 											<label for="startTime" class="col-sm-4 control-label">开始时间</label>
 											<div class="col-sm-4">
-												<input type="text" class="form-control" id="startTime" name="startTime">
+												<input type="text" class="form-control" id="startTime" name="startTime" value="<?php echo $data[0]->StartTime;?>">
 											</div>
 											<label class="col-sm-4"></label>
 										</div>
 										<div class="form-group">
 											<label for="stopTime" class="col-sm-4 control-label">结束时间</label>
 											<div class="col-sm-4">
-												<input type="text" class="form-control" id="stopTime" name="stopTime">
+												<input type="text" class="form-control" id="stopTime" name="stopTime" value="<?php echo $data[0]->StopTime;?>">
 											</div>
 											<label class="col-sm-4"></label>
 										</div>
 										<div class="form-group">
 											<label for="location" class="col-sm-4 control-label">教室</label>
 											<div class="col-sm-4">
-												<input type="text" class="form-control" id="location" name="location">
+												<input type="text" class="form-control" id="location" name="location" value="<?php echo $data[0]->Location;?>">
 											</div>
 											<label class="col-sm-4"></label>
 										</div>
@@ -142,8 +146,13 @@
 											<div class="col-sm-4">
 												<select class="form-control" id="imageID" name="imageID">
 													<?php
-													for ($i=0;$i<count($images);$i++)
-														echo "<option value=".$images[$i]->ImageID.">".$images[$i]->ImageName."</option>";
+													for ($i=0;$i<count($images);$i++){
+														if ($data[0]->ImageID==$images[$i]->ImageID){
+															echo "<option value=".$images[$i]->ImageID." selected='selected'>".$images[$i]->ImageName."</option>";
+														}else{
+															echo "<option value=".$images[$i]->ImageID." >".$images[$i]->ImageName."</option>";
+														}
+													}
 													?>
 												</select>
 											</div>
@@ -153,6 +162,7 @@
 										<!--created字段由系统设置-->
 										<div class="form-group">
 											<div class="col-sm-offset-2 col-sm-6" align="right">
+												<a href="<?php echo site_url('/admin/show_course_list')?>">取消</button>
 												<button type="submit" class="btn btn-defualt">提交修改</button>
 											</div>
 										</div> 

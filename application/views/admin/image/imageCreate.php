@@ -57,6 +57,14 @@
                                         </div>
                                         <label class="col-sm-4"></label>
                                     </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-6" align="right">
+                                            <a href="<?php echo site_url('/admin/show_course_list')?>">取消</button>
+                                            <button type="submit" class="btn btn-defualt">创建新课程类型</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <form  class="form-horizontal" method="post" action="<?php echo site_url('/admin/upload_image')?>">
                                     <div>
                                         <label for="imageFile" class="col-sm-4 control-label">镜像文件</label>
                                         <div>
@@ -66,7 +74,7 @@
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-6" align="right">
                                             <a href="<?php echo site_url('/admin/show_course_list')?>">取消</button>
-                                            <button type="submit" class="btn btn-defualt">创建新课程类型</button>
+                                            <button type="submit" class="btn btn-defualt">上传镜像</button>
                                         </div>
                                     </div>                              
                                 </form>  
