@@ -4,7 +4,7 @@ class UserCrud extends CI_Model{
 		parent::__construct();
 		$this->load->database();
 	}
-	function creat_user($data){
+	function create_user($data){
 		$this->db->insert("users",$data);
 	}
 	function read_user_list($type="-1"){//if $type==-1, read all the users
@@ -17,13 +17,16 @@ class UserCrud extends CI_Model{
 		$query = $this->db->select("UserNum,UserName,UserID,TenantID,Gender,Email,Section,Type")->where("UserNum",$userNum)->from("users")->get();
 		return $query->result();
 	}
-	function read_user_password($userNum){
-		$query = $this->db->select("Password")->where("UserNum",$userNum)->from("users")->get();
+	function read_user_type($userNum){
+		return $this->db->select("Type")->from("users")->where("userNum",$userNum)->get()->result()[0]->Type;
+	}
+	function read_user_login_info($userNum){
+		$query = $this->db->select("Type,UserNum,Password")->where("UserNum",$userNum)->from("users")->get();
 		return $query->result();
 	}
 
 	function update_user_info($data,$userNum){
-		$this->db->update("users",$data)->where("UserNum",$userNum);
+		$this->db->where("UserNum",$userNum)->update("users",$data);
 	}
 
 	function delete_user($userNum){
@@ -32,8 +35,15 @@ class UserCrud extends CI_Model{
 	function search_user($columnName,$keyword,$type="-1"){
 		$this->db->select("UserNum,UserName,UserID,TenantID,Gender,Email,Section,Type")->from("users");
 		if ($type!="-1") $this->db->where("Type",$type);
-		$query = $this->db->like("columnName",$keyword)->get();
+		$query = $this->db->like($columnName,$keyword)->get();
 		return $query->result();
+	}
+	function count_user(){
+		$data = array();
+		for ($i=0;$i<3;$i++){
+			$data[] = $this->db->select("count(*) AS COUNT")->from("users")->where("Type",$i)->get()->result()[0]->COUNT;
+		}
+		return $data;
 	}
 	function read_teacher_list(){
 		return $this->db->select("UserNum,UserName")->from("users")->where("Type","1")->get()->result();

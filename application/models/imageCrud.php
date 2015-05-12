@@ -4,7 +4,7 @@ class ImageCrud extends CI_Model{
 		parent::__construct();
 		$this->load->database();
 	}
-	function creat_image($data){
+	function create_image($data){
 		$this->db->insert("images",$data);
 	}
 	function read_image_list(){
@@ -16,6 +16,10 @@ class ImageCrud extends CI_Model{
 	}
 	function delete_image($ImageID){
 		$this->db->delete("images")->where("ImageID",$ImageID);
+	}
+	function count_image(){
+		$data=$this->db->select("count(*) AS COUNT")->from("images")->get()->result()[0]->COUNT;
+		return $data;
 	}
 }
 ?>

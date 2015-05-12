@@ -25,21 +25,21 @@ class CourseCrud extends CI_Model{
 	function create_course($data){
 		$this->db->insert("courses",$data);
 	}
-	function read_course_list($type="0",$isAdmin="0"){
+	function read_course_list($type="-1",$isAdmin="0"){
 		//can read course overview according to the type if the type is set 
 		//or can read all coures' overview if type is not set
 		//if the caller is admin user, the course list should include those not created successfully.
 		//if the caller is teacher or student, the course list should include only those created successfully. 
 		$this->db->select("CourseID,CourseName,TeacherID,TypeID,State,SubmitLimit,CourseDesc,Created")->from("courses");
-		if($type){$this->db->where("TypeID",$type);}
+		if($type!="-1"){$this->db->where("TypeID",$type);}
 		if($isAdmin){$this->db->where("Created","0");}
 		$query = $this->db->get();
 		return $query->result();
 	}
-	function search_course_list($type="0",$isAdmin="0",$column,$keyword){
+	function search_course_list($type="-1",$isAdmin="0",$column,$keyword){
 		$this->db->select("CourseID,CourseName,TeacherID,TypeID,State,SubmitLimit,CourseDesc,Created");
 		if($type){$this->db->where("TypeID",$type);}
-		if($isAdmin){$this->db->where("Created","1");}
+		if(!$isAdmin){$this->db->where("Created","1");}
 		$query = $this->db->like($column,$keyword)->from("courses")->get();
 		return $query->result();
 	}
@@ -72,6 +72,13 @@ class CourseCrud extends CI_Model{
 		}
 		return $this->upload->data();
 
+	}
+	function count_course(){
+		$data = array();
+		for($i=0;$i<3;$i++){
+			$data[] = $this->db->select("count(*) AS COUNT")->from("courses")->where("State",$i)->get()->result()[0]->COUNT;
+		}
+		return $data;
 	}
 
 }

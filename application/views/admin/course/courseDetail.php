@@ -162,7 +162,7 @@
 										<!--created字段由系统设置-->
 										<div class="form-group">
 											<div class="col-sm-offset-2 col-sm-6" align="right">
-												<a href="<?php echo site_url('/admin/show_course_list')?>">取消</button>
+												<a href="<?php echo site_url('/admin/course_manager')?>">取消</button>
 												<button type="submit" class="btn btn-defualt">提交修改</button>
 											</div>
 										</div> 

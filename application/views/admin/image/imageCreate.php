@@ -42,18 +42,18 @@
                                 <h3 class="panel-title">创建新镜像</h3>
                             </div>
                             <div class="panel-body">
-                                <form class="form-horizontal" method="post" action="<?php echo site_url('/admin/create_image_action')?>">
+                                <form class="form-horizontal" method="post" action="<?php echo site_url('/admin/image_create_action')?>">
                                     <div class="form-group">
                                         <label for="imageName" class="col-sm-4 control-label">镜像名</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" id="typeName" name="typeName">
+                                            <input type="text" class="form-control" id="imageName" name="imageName">
                                         </div>                                      
                                         <label class="col-sm-4"></label>
                                     </div>
                                     <div class="form-group">
                                         <label for="imageDesc" class="col-sm-4 control-label">镜像描述</label>
                                         <div class="col-sm-4">
-                                            <input type="text" class="form-control" id="Description" name="Description">
+                                            <input type="text" class="form-control" id="Description" name="imageDesc">
                                         </div>
                                         <label class="col-sm-4"></label>
                                     </div>
@@ -67,7 +67,7 @@
                                 <form  class="form-horizontal" method="post" action="<?php echo site_url('/admin/upload_image')?>">
                                     <div>
                                         <label for="imageFile" class="col-sm-4 control-label">镜像文件</label>
-                                        <div>
+                                        <div class="col-sm-4">
                                             <input type="file" class="form-control" id="imageFile" name="imageFile">
                                         </div>
                                     </div>

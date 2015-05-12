@@ -24,14 +24,14 @@
                 <div class="row">
                     <div class="col-xs-2">
                         <ul class="nav nav-pills nav-stacked">
-                            <li role="presentation"><a href="<?php echo site_url('/admin/index')?>">系统概况</a></li>
-                            <li role="presentation" class="active"><a href="<?php echo site_url('/admin/user_manager')?>">用户管理</a></li>
-                            <li role="presentation"><a href="<?php echo site_url('/admin/course_manager')?>">课程管理</a></li>
-                            <li role="presentation"><a href="<?php echo site_url('/admin/image_manager')?>">镜像管理</a></li>
+                            <li role="presentation"><a href="<?php echo site_url('/admin/index');?>">系统概况</a></li>
+                            <li role="presentation" class="active"><a href="<?php echo site_url('/admin/user_manager');?>">用户管理</a></li>
+                            <li role="presentation"><a href="<?php echo site_url('/admin/course_manager');?>">课程管理</a></li>
+                            <li role="presentation"><a href="<?php echo site_url('/admin/image_manager');?>">镜像管理</a></li>
                             <li role="presentation" class="dropdown"><a  class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">个人设定<span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li role="presentation"><a href="<?php echo site_url('/admin/profile')?>">个人信息</a></li>                
-                                    <li role="presentation"><a href="<?php echo site_url('/admin/reset_pswd')?>">修改密码</a></li>                
+                                    <li role="presentation"><a href="<?php echo site_url('/admin/profile');?>">个人信息</a></li>                
+                                    <li role="presentation"><a href="<?php echo site_url('/admin/reset_pswd');?>">修改密码</a></li>                
                                 </ul>
                             <li role="presentation"><a href="<?php echo site_url('/login/logout')?>">退出登陆</a></li>
                             </li>
@@ -40,27 +40,26 @@
                     <div class="col-xs-10">
                         <div>
                             <ul class="nav nav-tabs">
-                                <li role="presentation" name = "allUser" class="tag active"><a href="<?php echo site_url('/admin/show_user_list')?>">所有用户</a></li>
-                                <li role="presentation" name = "admin" class="tag"><a href="<?php echo site_url('/admin/show_admin_list')?>">管理员</a></li>
-                                <li role="presentation" name = "teacher" class="tag"><a href="<?php echo site_url('/admin/show_teacher_list')?>">教师</a></li>
-                                <li role="presentation" name = "student" class="tag"><a href="<?php echo site_url('/admin/show_student_list')?>">学生</a></li>
+                                <li role="presentation" name = "allUser" <?php if ($activeTop=="-1") echo "class='active'";?>><a href="<?php $operation='/admin/user_manager/-1'; echo site_url($operation);?>">所有用户</a></li>
+                                <li role="presentation" name = "admin" <?php if ($activeTop=="0") echo "class='active'";?>><a href="<?php $operation='/admin/user_manager/0'; echo site_url($operation);?>">管理员</a></li>
+                                <li role="presentation" name = "teacher" <?php if ($activeTop=="1") echo "class='active'";?>><a href="<?php $operation='/admin/user_manager/1'; echo site_url($operation);?>">教师</a></li>
+                                <li role="presentation" name = "student" <?php if ($activeTop=="2") echo "class='active'";?>><a href="<?php $operation='/admin/user_manager/2'; echo site_url($operation);?>">学生</a></li>
                             </ul>
                         </div>
                         <div class="table-responsive">
                             <div><br></div>
-
                             <div>
-                                <form class="form-inline" method="post" action="<?php echo site_url('/admin/search_course')?>"> 
+                                <form class="form-inline" method="post" action="<?php $operation='/admin/search_user/'.$activeTop; echo site_url($operation);?>"> 
                                     <div class="col-xs-8">
                                         <div class="input-group">
                                             <select class="form-control" name="selectColumn">
-                                                <option value="UserNum">学号/工号</option>
-                                                <option value="UserName">用户名</option>
-                                                <option value="Email">邮箱</option>
+                                                <option value="UserNum" <?php if($selectColumn=="userNum")echo"selected='selected'";?>>学号/工号</option>
+                                                <option value="UserName"<?php if($selectColumn=="userName")echo"selected='selected'";?>>用户名</option>
+                                                <option value="Email"<?php if($selectColumn=="Email")echo"selected='selected'";?>>邮箱</option>
                                             </select>
                                         </div>
                                         <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="关键字" name="keyword">
+                                            <input type="text" class="form-control" placeholder=<?php if ($keyword) echo $keyword;else echo"关键字";?> name="keyword">
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default" type="submit">查询</button>
                                             </span>
@@ -104,7 +103,7 @@
                                                                     </label>
                                                                 </div>
                                                             </td>
-                                                            <td><a href=".site_url('/admin/view_user').">".$data[$i]->UserNum."</a></td>
+                                                            <td><a href=".site_url('/admin/show_user_detail/'.$data[$i]->UserNum).">".$data[$i]->UserNum."</a></td>
                                                             <td>".$data[$i]->UserName."</td>
                                                             <td>".$data[$i]->Gender."</td>
                                                             <td>".$data[$i]->Section."</td>

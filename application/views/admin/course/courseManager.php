@@ -22,14 +22,14 @@
                 <div class="row">
                     <div class="col-xs-2">
                         <ul class="nav nav-pills nav-stacked">
-                            <li role="presentation" <?php if($activeLeft==0) echo "class='active'"?>><a href="<?php echo site_url('/admin/index')?>">系统概况</a></li>
-                            <li role="presentation" <?php if($activeLeft==1) echo "class='active'"?>><a href="<?php echo site_url('/admin/user_manager')?>">用户管理</a></li>
-                            <li role="presentation" <?php if($activeLeft==2) echo "class='active'"?>><a href="<?php echo site_url('/admin/course_manager')?>">课程管理</a></li>
-                            <li role="presentation" <?php if($activeLeft==3) echo "class='active'"?>><a href="<?php echo site_url('/admin/image_manager')?>">镜像管理</a></li>
-                            <li role="presentation" class="dropdown" <?php if($activeLeft==4||$activeLeft ==5) echo "class='active'"?>><a  class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">个人设定<span class="caret"></span></a>
+                            <li role="presentation"><a href="<?php echo site_url('/admin/index')?>">系统概况</a></li>
+                            <li role="presentation"><a href="<?php echo site_url('/admin/user_manager')?>">用户管理</a></li>
+                            <li role="presentation" class="active"><a href="<?php echo site_url('/admin/course_manager')?>">课程管理</a></li>
+                            <li role="presentation"><a href="<?php echo site_url('/admin/image_manager')?>">镜像管理</a></li>
+                            <li role="presentation" class="dropdown"><a  class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">个人设定<span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li role="presentation" <?php if($activeLeft==4) echo "class='active'"?>><a href="<?php echo site_url('/admin/profile')?>">个人信息</a></li>                
-                                    <li role="presentation" <?php if($activeLeft==5) echo "class='active'"?>><a href="<?php echo site_url('/admin/reset_pswd')?>">修改密码</a></li>                
+                                    <li role="presentation"><a href="<?php echo site_url('/admin/profile')?>">个人信息</a></li>                
+                                    <li role="presentation"><a href="<?php echo site_url('/admin/reset_pswd')?>">修改密码</a></li>                
                                 </ul>
                             <li role="presentation"><a href="<?php echo site_url('/login/logout')?>">退出登陆</a></li>
                             </li>
@@ -37,18 +37,17 @@
                     </div>
                     
                     <div class="col-xs-10">                        
-                        <div>
-                            <form>                                
+                        <div>                               
                             <ul class="nav nav-tabs">
                                 <?php 
                                 $li = "<li role='presentation'";
-                                if($activeTop==0) $li = $li."class='active'";                                
-                                $li = $li."><a href=".site_url('/admin/show_course_list').">所有课程</a></li>";
+                                if($activeTop==-1) $li = $li."class='active'";                                
+                                $li = $li."><a href=".site_url('/admin/course_manager').">所有课程</a></li>";
                                 echo $li;
                                 for ($i=0;$i<count($courseType);$i++){
                                     $li = "<li role='presentation'";
                                     if($activeTop==$courseType[$i]->TypeID) $li = $li."class='active'";
-                                    $operation = "/admin/show_course_list/".$courseType[$i]->TypeID;
+                                    $operation = "/admin/course_manager/".$courseType[$i]->TypeID;
                                     $li = $li."><a href=".site_url($operation).">".$courseType[$i]->TypeName."</a></li>";
                                     echo $li;
                                 }
@@ -56,7 +55,6 @@
                                 echo $li;
                                 ?>
                             </ul>
-                            </form>
                         </div>
                         <div class="table-responsive">
                             <div><br></div>
@@ -83,7 +81,7 @@
                                 </form>
                             </div>
                             <div>
-                                <form class="form-horizontal" method="post" action="<?php echo site_url('/admin/delete_course_action')?>">
+                                <form class="form-horizontal" method="post" action="<?php $operation='/admin/delete_course_action/'.$activeTop;echo site_url($operation);?>">
                                     <table class="table table-striped table-hover">
                                         <thead>
                                             <tr>

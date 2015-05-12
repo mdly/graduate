@@ -9,10 +9,10 @@ class Login extends CI_Controller {
 		//$this->load->view('echo');
 	}
 	function check(){
-		$this->load->model('crud');
+		$this->load->model('userCrud');
 		//加载ucrud模块，该模块用于用户的crud
-		$sql = array('*','users','UserNum',$_POST['uNumber']);
-		$user = $this->crud->select($sql);
+		//$sql = array('*','users','UserNum',$_POST['uNumber']);
+		$user = $this->userCrud->read_user_login_info($_POST['uNumber']);
 		//调用u_crud模型的u_select方法查询提交的学号/工号信息
 		if ($user){
 			//如果用户存在
@@ -21,19 +21,18 @@ class Login extends CI_Controller {
 				//如果密码一致，创建session
 				$this->load->library('session');
 				//载入CI的session库
-				$arr = array('s_id' => $user[0]->UserNum);
+				$data = array('s_id' => $user[0]->UserNum);
 				//把用户Num存入数组
-				$this->session->set_userdata($arr);
-				//设置session				
-				if ($user[0]->Type == '0'){
-					//echo "admin user login";
-					//$this->load->view('/admin/admin');
-					redirect('admin');
+				$this->session->set_userdata($data);
+				//设置session
+				switch ($user[0]->Type) {
+					case '0':redirect('admin');break;
+					case '1':redirect('teacher');break;
+					case '2':redirect('student');break;
+					default:break;
 				}
 			}else{
-				echo 'pw wrong';
-				echo '用户数据库中密码'.$user[0]->Password;
-				echo '用户输入的'.$_POST['password'];					
+				echo 'pw wrong';				
 			}
 		}else{
 			echo 'name wrong';
@@ -43,6 +42,7 @@ class Login extends CI_Controller {
 		$this->load->view("forgetPassword");
 	}
 	function get_CAPTCHA(){
+		//未完成
 		//用户必须输入学号/工号,并且输入对应邮箱才可以找回密码，
 		//找回密码使用验证码的方式，后台向邮箱发送具有时效的验证码，
 		//用户输入验证码，后台检验
