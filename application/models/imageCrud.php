@@ -4,7 +4,11 @@ class ImageCrud extends CI_Model{
 		parent::__construct();
 		$this->load->database();
 	}
+	function get_image_from_os($data){
+		$this->db->insert('images',$data);
+	}
 	function create_image($data){
+		//gaigaigai
 		$this->db->insert("images",$data);
 	}
 	function read_image_list(){

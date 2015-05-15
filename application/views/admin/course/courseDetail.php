@@ -42,7 +42,7 @@
 								<h3 class="panel-title">课程信息</h3>
 							</div>
 							<div class="panel-body">
-									<form class="form-horizontal" method="post" action="<?php echo site_url('/admin/create_course_action')?>">
+									<form enctype="multipart/form-data" class="form-horizontal" method="post" action="<?php echo site_url('/admin/update_course_action/'.$data[0]->CourseID);?>">
 										<div class="form-group">
 											<label for="courseName" class="col-sm-4 control-label">课程名</label>
 											<div class="col-sm-4">

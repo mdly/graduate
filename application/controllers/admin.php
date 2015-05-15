@@ -16,6 +16,23 @@ class Admin extends CI_Controller {
 	}
 	public function index(){
 		//admin用户登录进来以后的第一个页面
+		$this->load->model('openstack');
+		$userName = 'symol';
+		$password = 'God!sMe';
+		$token = $this->openstack->authenticate_v2($userName,$password);
+		//print_r($token);
+		$tokenExpires = $token['access']['token']['expires'];
+		$tokenID = $token['access']['token']['id'];
+		//echo $tokenExpires;
+		//获取到expires以后还可以判断是否过期来决定是否要重新申请一个新的token。
+		//echo "<br>";
+		//echo $tokenID;
+		//echo $token;
+		$imageOS = $this->openstack->get_image_list($tokenID)['images'];
+		$imageOSCount = count($imageOS);
+		//echo $imageOSCount;
+		//echo "the image_OS = ";
+		//print_r($image_OS);
 		$this->load->model('userCrud');
 		$user = $this->userCrud->count_user();
 		$this->load->model('courseCrud');
@@ -24,7 +41,7 @@ class Admin extends CI_Controller {
 		$image = $this->imageCrud->count_image();
 		$data = array('NAdmin' => $user[0],'NTeacher' => $user[1],'NStudent' => $user[2],
 			'NCourseOff' => $course[0],'NCourseOn' => $course[1],'NCourseDone' => $course[2],
-			'NImage' => $image);
+			'NImage' => $imageOSCount);
 		$this->load->view('/admin/admin',$data);
 	}
 
@@ -94,7 +111,6 @@ class Admin extends CI_Controller {
 		$courseType = $this->courseCrud->read_type_list();
 		$course = $this->courseCrud->read_course_list($type,"1");
 		$this->load->view("/admin/course/courseManager",array('data'=>$course,'courseType'=>$courseType,'activeTop'=>$type,'selectColumn'=>"0",'keyword'=>""));
-		// 载入CI的session库
 	}
 	function show_course_detail($courseID){
 		$this->load->model("courseCrud");
@@ -113,7 +129,7 @@ class Admin extends CI_Controller {
 		$keyword = $_POST["keyword"];		
 		$courseType = $this->courseCrud->read_type_list();
 		$course = $this->courseCrud->search_course_list($type,"1",$column,$keyword);
-		echo count($course);
+		//echo count($course);
 		$this->load->view("/admin/course/courseManager",array('data' =>$course,'courseType'=>$courseType,'activeTop'=>$type,'selectColumn'=>$column));
 	}
 	function create_course(){
@@ -123,11 +139,46 @@ class Admin extends CI_Controller {
 		$teachers = $this->userCrud->read_teacher_list();
 		$types = $this->courseCrud->read_type_list();
 		$images = $this->imageCrud->read_image_list();
+		//$token = $this->openstack->authenticate_v2($userName,$password);
+		//$imagesOS = $this->imageCrud->get_image_list_os();
         if(count($images)==0) {
         	echo "<script>alert('please create image first!')</script>";
         	$this->load->view('/admin/image/imageCreate');
         }
 		$this->load->view('/admin/course/courseCreate',array('teachers'=>$teachers,'types'=>$types,'images'=>$images));
+	}
+	function update_course_action($courseID){		
+		$this->load->model('courseCrud');
+		$config['upload_path']='./uploads';
+		$config['allowed_types']='pdf|doc|docx';
+		$config['max_size']='10240000';//10mb
+		$config['file_name']  = time();
+		$this->load->library('upload',$config);
+		$data = $this->upload->do_upload('file');
+		if($data){
+			$file_info = array('upload_data'=>$this->upload->data());
+		}else{
+			$error=array('error'=>$this->upload->display_errors());
+			$file_info['upload_data']['full_path']="";
+			var_dump($error);
+		}
+		$newCourse = array('CourseName'=>$_POST['courseName'],'TeacherID'=>$_POST['teacherID'],
+			'TypeID'=>$_POST['typeID'],'Duration'=>$_POST['duration'],'File'=>$file_info['upload_data']['full_path'],
+			'SubmitLimit'=>$_POST['submitLimit'],'CourseDesc'=>$_POST['courseDesc'],
+			'StartTime'=>$_POST['startTime'],'StopTime'=>$_POST['stopTime'],
+			'Location'=>$_POST['location'],'ImageID'=>$_POST['imageID']);
+		//$newType = array('TypeName'=>$_POST['typeName'],'TypeDesc'=>$_POST['Description']);
+		if($newCourse['CourseName']&&$newCourse['TeacherID']
+			&&$newCourse['TypeID']&&$newCourse['File']
+			&&$newCourse['SubmitLimit']&&$newCourse['ImageID']){
+			$newCourse['Created']='1';
+		}else{
+			$newCourse['Created']='0';
+		}
+		$this->courseCrud->update_course_detail($newCourse,$courseID);	
+		$course = $this->courseCrud->read_course_list("-1","1");
+		$courseType = $this->courseCrud->read_type_list();
+		$this->load->view("/admin/course/courseManager",array('data'=>$course,'courseType'=>$courseType,'activeTop'=>-1,'selectColumn'=>"0",'keyword'=>""));
 	}
 	function create_course_action(){
 		//$this->load->model('crud');
@@ -136,20 +187,30 @@ class Admin extends CI_Controller {
 		$config['upload_path']='uploads';
 		$config['allowed_types']='pdf|doc|docx';
 		$config['max_size']='10240000';//10mb
-		$this->load->library('upload',$config);
-		$this->upload->do_upload('file');
-		if($this->upload->do_upload('file')){
-			$data = array('upload_data'=>$this->upload->data());
-			var_dump($data);
+		$config['file_name']  = time();
+		$this->load->library('upload',$config);		
+		$data = $this->upload->do_upload('file');
+		//var_dump($data);
+		if($data){
+			$file_info = array('upload_data'=>$this->upload->data());
+			//var_dump($file_info);
 		}else{
 			$error=array('error'=>$this->upload->display_errors());
-			var_dump($error);
+			$file_info['upload_data']['full_path']="";
+			//var_dump($error);
 		}
 		$newCourse = array('CourseName'=>$_POST['courseName'],'TeacherID'=>$_POST['teacherID'],
-			'TypeID'=>$_POST['typeID'],'Duration'=>$_POST['duration'],
+			'TypeID'=>$_POST['typeID'],'Duration'=>$_POST['duration'],'File'=>$file_info['upload_data']['full_path'],
 			'SubmitLimit'=>$_POST['submitLimit'],'CourseDesc'=>$_POST['courseDesc'],
 			'StartTime'=>$_POST['startTime'],'StopTime'=>$_POST['stopTime'],
 			'Location'=>$_POST['location'],'ImageID'=>"12345");
+		if($newCourse['CourseName']&&$newCourse['TeacherID']
+			&&$newCourse['TypeID']&&$newCourse['File']
+			&&$newCourse['SubmitLimit']&&$newCourse['ImageID']){
+			$newCourse['Created']='1';
+		}else{
+			$newCourse['Created']='0';
+		}
 		//$newType = array('TypeName'=>$_POST['typeName'],'TypeDesc'=>$_POST['Description']);
 		$this->courseCrud->create_course($newCourse);
 		$course = $this->courseCrud->read_course_list();
@@ -200,8 +261,21 @@ class Admin extends CI_Controller {
 		$this->load->view("/admin/course/courseType",array('data'=>$courseType));
 	}
 
-	function image_manager() {
+	function image_manager() {		
 		$this->load->model('imageCrud');
+/*
+		$this->load->model('openstack');
+		$userName = 'symol';
+		$password = 'God!sMe';
+		$token = $this->openstack->authenticate_v2($userName,$password);
+		$tokenExpires = $token['access']['token']['expires'];
+		$tokenID = $token['access']['token']['id'];
+		$imageOS = $this->openstack->get_image_list($tokenID)['images'];
+		for ($i=0;$i<count($imageOS);$i++){
+			$data=array('ImageName'=>$imageOS[$i]['name'],'ImageID'=>$imageOS[$i]['id'],'ImageURL'=>$imageOS[$i]['self'],'ImageDesc'=>'');
+			$this->imageCrud->get_image_from_os($data);
+		}
+		*/
 		$images = $this->imageCrud->read_image_list();
 		$this->load->view('/admin/image/imageManager',array('data'=>$images));
 	}

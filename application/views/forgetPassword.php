@@ -21,7 +21,7 @@
             <div class="row" align="center">
                 <div class="col-md-3"></div>
                 <div class="col-md-6">
-                    <form class="form-horizontal" method="post" action="<?php echo site_url('/login/get_CAPTCHA')?>">
+                    <form class="form-horizontal" method="post" action="<?php echo site_url('/login/reset_password_action')?>">
                         <div class="form-group">
                             <label for="login-id" name="login-id" class="col-sm-2 control-label">学号/工号</label>
                             <div class="col-sm-10">

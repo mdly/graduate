@@ -247,11 +247,11 @@ CREATE TABLE IF NOT EXISTS `Courses` (
     ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1
 //镜像表
 CREATE TABLE IF NOT EXISTS `Images` ( 
-    `ImageIndex` int(10) NOT NULL,
+    `ImageIndex` int(10) NOT NULL,//删除，添加`ImageURL` varchar(128) not null
     `ImageName` varchar(128) NOT NULL,
     `ImageID` varchar(128) NOT NULL,
     `ImageDesc` text,
-    PRIMARY KEY (`ImageIndex`),
+    PRIMARY KEY (`ImageIndex`),//改为ImageID
 	UNIQUE KEY `ImageID` (`ImageID`))
     ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1
 //课程类型表

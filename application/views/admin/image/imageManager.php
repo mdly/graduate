@@ -63,11 +63,11 @@
                                                             <td scope='row'>
                                                                 <div class='checkbox'>
                                                                     <label>
-                                                                        <input type='checkbox' name='deleteImage' value=".$data[$i]->ImageIndex.">
+                                                                        <input type='checkbox' name='deleteImage' value=".$data[$i]->ImageID.">
                                                                     </label>
                                                                 </div>
                                                             </td>
-                                                            <td>".$data[$i]->ImageIndex."</td>
+                                                            <td>".$data[$i]->ImageID."</td>
                                                             <td>".$data[$i]->ImageName."</td>
                                                             <td>".$data[$i]->ImageDesc."</td>
                                                         </tr>";

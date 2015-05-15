@@ -30,9 +30,9 @@ class CourseCrud extends CI_Model{
 		//or can read all coures' overview if type is not set
 		//if the caller is admin user, the course list should include those not created successfully.
 		//if the caller is teacher or student, the course list should include only those created successfully. 
-		$this->db->select("CourseID,CourseName,TeacherID,TypeID,State,SubmitLimit,CourseDesc,Created")->from("courses");
+		$this->db->select("CourseID,CourseName,TeacherID,TypeID,State,SubmitLimit,CourseDesc,Created,File")->from("courses");
 		if($type!="-1"){$this->db->where("TypeID",$type);}
-		if($isAdmin){$this->db->where("Created","0");}
+		if(!$isAdmin){$this->db->where("Created","1");}
 		$query = $this->db->get();
 		return $query->result();
 	}
@@ -50,7 +50,7 @@ class CourseCrud extends CI_Model{
 		return $query->result();
 	}
 	function update_course_detail($data,$courseID){
-		$this->db->update("courses",$data)->where("courseID",$courseID);
+		$this->db->where("courseID",$courseID)->update("courses",$data);
 	}
 	function delete_course($courseID){
 		$this->db->where("courseID",$courseID)->delete("courses");

@@ -38,9 +38,35 @@ class Login extends CI_Controller {
 			echo 'name wrong';
 		}
 	}
-	function load_set_password_page(){
+	function reset_password(){
 		$this->load->view("forgetPassword");
 	}
+
+	function reset_password_action(){
+		//生成token
+		$time = date("Y-m-d h:i:s",strtotime(" + 30 minute"));echo $time;
+		echo "<br>";
+		$time = date("Y-m-d h:i:s");echo $time;
+		//发送邮件给用户email，使用验证码，
+		//将（验证码，用户名，时间戳）对存放到数据库中
+		//显示验证界面，用户输入用户名，验证码，以及新的密码，
+	}
+	/*
+	function reset_password_action(){
+		$this->load->model('validation');
+		$token = $_POST['token'];
+		$isValidToken = $this->validation->is_valid_token($token);
+		if($isValidToken){
+			$isValidPass = $this->validation->is_valid_password(md5($_POST['password1']),md5($_POST['password2']));
+			if($isValidPass){
+				$newPass = md5(($_POST['password1']));
+				$this->load->model('userCrud');
+				$this->userCrud->update_user_info(array("Password"=>md5($newPass)));
+				$this->load->view('login');
+				$this->load->model('token');
+			}
+		}
+	}*/
 	function get_CAPTCHA(){
 		//未完成
 		//用户必须输入学号/工号,并且输入对应邮箱才可以找回密码，
@@ -60,6 +86,7 @@ class Login extends CI_Controller {
 			$config["smtp_port"]="465";
 			$config["smtp_user"]="1656016399@qq.com";
 			$config["smtp_pass"]="3991qq.www";
+			$config['smtp_crypto'] = 'tls';
 			$this->load->library("email",$config);
 			$this->email->from("1656016399@qq.com","wyc");
 			$this->email->to("mudengleyi@163.com","mdly");

@@ -35,7 +35,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10" align="right">
-                                <a class="login-link" href="<?php echo site_url('/login/load_set_password_page')?>">忘记密码？</a>
+                                <a class="login-link" href="<?php echo site_url('/login/reset_password')?>">忘记密码？</a>
                                 <button type="submit" class="btn btn-defualt">登录</button>
                             </div>
                         </div>
