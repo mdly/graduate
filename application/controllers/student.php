@@ -16,6 +16,7 @@ class Student extends CI_Controller {
 	}
 	function index(){
 		$this->load->model('courseCrud');
+		//$unselectedCourse = $this->courseCrud->read;
 		$courseType = $this->courseCrud->read_type_list();
 		$course = $this->courseCrud->read_course_list("-1","0");
 		//echo $course[0]->File;
@@ -23,7 +24,10 @@ class Student extends CI_Controller {
 	}
 	function course_manager(){
 		$this->load->model('courseCrud');
-		$course = $this->courseCrud->read_type_list('-1','0');
+		$courseType = $this->courseCrud->read_type_list();
+		$course = $this->courseCrud->read_course_list("-1","0");
+		//echo $course[0]->File;
+		$this->load->view('/student/student',array('data'=>$course,'courseType'=>$courseType));
 	}
 	function download_file($courseID){
 		$filePath = $this->db->select("File")->from("courses")->where("CourseID",$courseID)->get()->result()[0]->File;
@@ -46,20 +50,17 @@ class Student extends CI_Controller {
 		$tokenID = $token['access']['token']['id'];
 		//echo $tokenID;
 		$networks = $this->openstack->get_resources($tokenID,$tenantID,'network')['networks'];
-		echo"<br>";
-		echo"<br>";
-		echo"<br>";
 		$flavors = $this->openstack->get_resources($tokenID,$tenantID,'flavor')['flavors'];
-		echo"<br>";
-		echo"<br>";
-		echo"<br>";
-
 		$images = $this->openstack->get_resources($tokenID,$tenantID,'image')['images'];
-		echo"<br>";
-		echo"<br>";
-		echo"<br>";
-		//print_r($flavors);
+		$servers = $this->openstack->get_resources($tokenID,$tenantID,'server')['servers'];
+		//print_r($servers);
 
+		//echo count($networks);
+		//echo count($flavors);
+		//echo count($images);
+		//show the create vm page
+
+		//$this->load->view('/student/setEnviron');
 		//虚拟机的创建涉及：
 		//echo "this is start_course function";
 		//print_r($network);

@@ -48,6 +48,9 @@ class UserCrud extends CI_Model{
 	function read_teacher_list(){
 		return $this->db->select("UserNum,UserName")->from("users")->where("Type","1")->get()->result();
 	}
+	function read_userName_by_ID($userNum){
+		return $this->db->select("UserName")->from("users")->where("UserNum",$userNum)->get()->result()[0]->UserName;
+	}
 }
 /*
 //用户表

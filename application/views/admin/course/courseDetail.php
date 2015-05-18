@@ -142,6 +142,23 @@
 											<label class="col-sm-4"></label>
 										</div>
 										<div class="form-group">
+											<label for="imageIDAtk" class="col-sm-4 control-label">攻击机镜像</label>
+											<div class="col-sm-4">
+												<select class="form-control" id="imageIDAtk" name="imageIDAtk">
+													<?php
+													for ($i=0;$i<count($images);$i++){
+														if ($data[0]->imageIDAtk==$images[$i]->imageIDAtk){
+															echo "<option value=".$images[$i]->imageIDAtk." selected='selected'>".$images[$i]->ImageName."</option>";
+														}else{
+															echo "<option value=".$images[$i]->imageIDAtk." >".$images[$i]->ImageName."</option>";
+														}
+													}
+													?>
+												</select>
+											</div>
+											<label class="col-sm-4"></label>
+										</div>
+										<div class="form-group">
 											<label for="imageID" class="col-sm-4 control-label">镜像</label>
 											<div class="col-sm-4">
 												<select class="form-control" id="imageID" name="imageID">

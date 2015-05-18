@@ -20,9 +20,14 @@
                 <div class="row">
                     <div class="col-xs-2">
                         <ul class="nav nav-pills nav-stacked">
-                            <li role="presentation" clas="active"><a href="<?php echo site_url('/student/course_manager')?>">我的课程</a></li>
-                            <li role="presentation"><a href="<?php echo site_url('/student/course_unselected')?>">未选择的课程</a></li>
-                            <li role="presentation" class="dropdown"><a  class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">个人设定<span class="caret"></span></a>
+                            <li role="presentation" class="active dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="<?php echo site_url('/student/course_manager');?>" role="button" aria-expanded="true">我的课程<span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li role="presentation"><a href="<?php echo site_url('/student/course_unselected');?>">未选择的课程</a></li>
+                                    <li role="presentation"><a href="<?php echo site_url('/student/course_selected');?>">已选择的课程</a></li>
+                                    <li role="presentation"><a href="<?php echo site_url('/student/course_finished');?>">已完成的课程</a></li>        
+                                </ul>
+                            </li>
+                            <li role="presentation" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="true">个人设定<span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li role="presentation"><a href="<?php echo site_url('/student/profile')?>">个人信息</a></li>                
                                     <li role="presentation"><a href="<?php echo site_url('/student/reset_pswd')?>">修改密码</a></li>
@@ -59,7 +64,7 @@
                                                 <td>".$index."</td>
                                                 <td>".$data[$i]->CourseName."</td>
                                                 <td>".$data[$i]->TeacherID."</td>
-                                                <td><a href=".site_url('/student/download_file/'.$data[$i]->CourseID).">查看</a></td>
+                                                <td><a href=".site_url('/general/download_file/'.$data[$i]->CourseID).">查看</a></td>
                                                 <td>".$data[$i]->SubmitLimit."次</td>
                                                 <td><a href=".site_url('/student/start_course/'.$data[$i]->CourseID).">开始课程</td>
                                             </tr>";

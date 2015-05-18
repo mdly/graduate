@@ -20,7 +20,7 @@ class CourseCrud extends CI_Model{
 		$this->db->update("coursetype",$newRecord)->where("TypeID",$typeID);
 	}
 	function delete_type($typeID){
-		$this->db->delete("coursetype")->where("TypeID",$typeID);
+		$this->db->where("TypeID",$typeID)->delete("coursetype");
 	}
 	function create_course($data){
 		$this->db->insert("courses",$data);
@@ -47,7 +47,7 @@ class CourseCrud extends CI_Model{
 	function read_course_detail($courseID){
 		$this->db->select("*")->where("courseID",$courseID)->from("courses");
 		$query = $this->db->get();
-		return $query->result();
+		return $query->result()[0];
 	}
 	function update_course_detail($data,$courseID){
 		$this->db->where("courseID",$courseID)->update("courses",$data);
@@ -73,13 +73,31 @@ class CourseCrud extends CI_Model{
 		return $this->upload->data();
 
 	}
-	function count_course(){
+	function count_course($userNum="-1"){
 		$data = array();
+		if($userNum=="-1")
 		for($i=0;$i<3;$i++){
 			$data[] = $this->db->select("count(*) AS COUNT")->from("courses")->where("State",$i)->get()->result()[0]->COUNT;
 		}
+		else{
+			for ($i=0; $i<3; $i++) {
+				$this->db->select("count(*) AS COUNT")->from("courses")->where("State",$i);
+				$this->db->where("TeacherID",$userNum);
+				$data[] = $this->db->get()->result()[0]->COUNT;
+			}
+		}
+			
 		return $data;
 	}
 
+	function read_course_list_by_teacher($teacherID,$type){
+		$this->db->select("CourseID,CourseName,TypeID,State,SubmitLimit,File")->from('courses')->where('TeacherID',$teacherID);
+		if($type!="-1")$this->db->where("TypeID",$type);
+		return $this->db->get()->result();
+	}
+	function read_typeName_by_ID($typeID){
+		$data = $this->db->select("TypeName")->from("coursetype")->where("TypeID",$typeID)->get()->result()[0]->TypeName;
+		return $data;
+	}
 }
 ?>

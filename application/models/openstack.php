@@ -29,24 +29,21 @@ class Openstack extends CI_Model{
 		switch ($resources) {
 			case 'network':$url = $site.":9696/v2.0/networks";break;
 			case 'flavor':$url = $site.":8774/v2/".$tenantID."/flavors";break;
-			//8774/v2/tenant_id/flavors
-			//case 'flavor':$url = $site.":8774/v2/".$tenantID."​/flavors/detail";break;
-			//case 'flavor':$url = $site.":8774/v2/".$tenantID."​/flavors";break;
-			//case 'flavor':$url =$site.":8774/v2.1/flavors/os-flavor-rxtx/detail";break;
-			//case'flavor':$url = $site.':8774/v2.1/flavors';break;
-			case 'image':$url = $site.":9292/v2/images";break;
+			case 'image':$url = $site.":8774/v2/".$tenantID."/images";break;
+			case 'server':$url = $site.":8774/v2/".$tenantID."/servers";break;
+			//case 'image':$url = $site.":9292/v2/images";break;
 			default:break;
 		}		
 		$header = array('X-Auth-Token: '.$tokenID);
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
-		//curl_setopt($ch, CURLOPT_GET, 1);
 		curl_setopt($ch, CURLOPT_HTTPGET, 1);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-		//curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($ch);
 		curl_close($ch);
-		print_r($result);
+		if($resources=="server")print_r($result);
+		//print_r($result);
 		return json_decode($result,true);
 	}
 
