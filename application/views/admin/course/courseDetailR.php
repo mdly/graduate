@@ -53,11 +53,19 @@
 				state由后台设置，分为0:off,1:on,2:done刚开始创建的时候为0：off
 			-->
 				<div class="form-group">
-					<label for="file" class="col-sm-4 control-label">课件</label>
+					<label for="fileName" class="col-sm-4 control-label">课件</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="fileName" name="fileName" value="<?php echo trim(strrchr($data->File,'/'),'/');?>">
+					</div>
+					<label class="col-sm-4"></label>
+				</div>
+				<div class="form-group">
+					<label for="file" class="col-sm-4 control-label">重新上传课件</label>
 					<div class="col-sm-4">
 						<input type="file" class="form-control" id="file" name="file" value="<?php echo $data->File;?>">
 					</div>
-					<label class="colfsm-4"></label>
+					<label class="col-sm-4"></label>
+					
 				</div>
 
 				<div class="form-group">
@@ -106,41 +114,78 @@
 				</div>
 				<div class="form-group">
 					<label for="imageIDAtk" class="col-sm-4 control-label">攻击机镜像</label>
-					<div class="col-sm-4">
-						<select class="form-control" id="imageIDAtk" name="imageIDAtk">
-							<?php
-							for ($i=0;$i<count($images);$i++){
-								if ($data->ImageIDAtk==$images[$i]->ImageIDAtk){
-									echo "<option value=".$images[$i]->ImageIDAtk." selected='selected'>".$images[$i]->ImageName."</option>";
-								}else{
-									echo "<option value=".$images[$i]->ImageIDAtk." >".$images[$i]->ImageName."</option>";
-								}
-							}
-							?>
-						</select>
+					<?php 
+					if(!count($attackerImage)){
+						echo "
+						<div class='col-sm-4'>
+							<input type='text' class='form-control' value='未指定镜像' disabled>
+						</div>
+						";
+					}else{
+						for ($i=0; $i < count($attackerImage); $i++) {
+							echo "
+							<div class='col-sm-4'>
+								<input type='text' class='form-control' value=".$attackerImage[$i]->ImageName." disabled>
+							</div>
+							<div class='col-sm-4'>
+								<a class='btn btn-default' href=".site_url('/admin/course_delete_attacker_image/'.$data->CourseID."/".$attackerImage[$i]->ImageID)."><span class='glyphicon glyphicon-minus' aria-hidden='true'></span></a>
+							</div>
+							<label class='col-sm-4'></label>
+							";
+						}						
+					}
+					?>
+					<label class="col-sm-4"></label>
+				</div>
+
+
+				<div class="form-group">
+					<label class="col-sm-4"></label>
+					<div class=" col-sm-4">
+						<a class="btn btn-default" href="<?php $operation = '/admin/course_add_attacker_image/'.$data->CourseID;echo site_url($operation);?>" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加新镜像</a>
 					</div>
 					<label class="col-sm-4"></label>
 				</div>
 				<div class="form-group">
 					<label for="imageIDTgt" class="col-sm-4 control-label">靶机镜像</label>
-					<div class="col-sm-4">
-						<select class="form-control" id="imageIDTgt" name="imageIDTgt">
-							<?php
-							for ($i=0;$i<count($images);$i++){
-								if ($data->ImageIDTgt==$images[$i]->ImageIDTgt){
-									echo "<option value=".$images[$i]->ImageIDTgt." selected='selected'>".$images[$i]->ImageName."</option>";
-								}else{
-									echo "<option value=".$images[$i]->ImageIDTgt." >".$images[$i]->ImageName."</option>";
-								}
-							}
-							?>
-						</select>
+					<?php 
+					if(!count($targetImage)){
+						echo "
+						<div class='col-sm-4'>
+							<input type='text' class='form-control' value='未指定镜像' disabled>
+						</div>
+						";
+					}else{
+						for ($i=0; $i < count($targetImage); $i++) {
+							echo "
+							<div class='col-sm-4'>
+								<input type='text' class='form-control' value=".$targetImage[$i]->ImageName." disabled>
+							</div>
+							<div class='col-sm-4'>
+								<a class='btn btn-default' href=".site_url('/admin/course_delete_target_image/'.$data->CourseID."/".$targetImage[$i]->ImageID)."><span class='glyphicon glyphicon-minus' aria-hidden='true'></span></a>
+							</div>
+							<label class='col-sm-4'></label>
+							";
+						}						
+					}
+					?>
+					<label class="col-sm-4"></label>
+				</div>
+
+
+
+
+
+				<div class="form-group">
+					<label class="col-sm-4"></label>
+					<div class=" col-sm-4">
+						<a class="btn btn-default" href="<?php $operation = '/admin/course_add_target_image/'.$data->CourseID;echo site_url($operation);?>" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加新镜像</a>
 					</div>
 					<label class="col-sm-4"></label>
 				</div>
 				<div class="form-group">
 					<div class="col-sm-offset-2 col-sm-6" align="right">
-						<a href="<?php echo site_url('/admin/course_manager')?>">取消</a>
+						<a href="<?php echo site_url('/admin/course_manager');?>">取消</a>
 						<button type="submit" class="btn btn-defualt">提交修改</button>
 					</div>
 				</div> 

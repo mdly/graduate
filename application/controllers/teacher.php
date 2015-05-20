@@ -41,14 +41,14 @@ class Teacher extends CI_Controller{
 		for ($i=0; $i < count($course); $i++) {
 			$Nstudent[] = $this->selectCourse->count_student_by_course($course[$i]->CourseID);
 			if (!$Nstudent[$i])$Nstudent[$i]=0;
-			$typeName[] = $this->courseCrud->read_typeName_by_ID($course[$i]->TypeID);
+			$typeName[] = $this->courseCrud->read_typeName_by_ID($course[$i]->CourseID);
 		}
 		$this->load->view('/teacher/top');
 		$this->load->view('/teacher/left',array('left'=>"1"));
 		$this->load->view("/teacher/course/courseManagerR",array('data'=>$course,'NStudent'=>$Nstudent,'typeName'=>$typeName,'courseType'=>$courseType,'activeTop'=>$type,'selectColumn'=>"0",'keyword'=>""));
 		$this->load->view('/teacher/botton');
 	}
-	function show_course_detail($courseID){		
+	function show_course_detail($courseID){
 		//teacher cannot edit course info except stopping or starting a course,
 		//so just show the info, but not in form section.
 		//show the student list, get info from selectcourse table
@@ -61,14 +61,13 @@ class Teacher extends CI_Controller{
 		$this->load->model("courseCrud");
 		$this->load->model("userCrud");
 		$this->load->model("imageCrud");
-		$teachers = $this->userCrud->read_teacher_list();
-		$types = $this->courseCrud->read_type_list();
-		$images = $this->imageCrud->read_image_list();
+		$typeName = $this->courseCrud->read_typeName_by_ID($courseID);
+		$imageName = $this->imageCrud->read_imageName_by_ID($courseID);
 		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
-		$this->load->view('/admin/top');
-		$this->load->view('/admin/left',array('left'=>"2"));
-		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'images'=>$images));
-		$this->load->view('/admin/botton');
+		$this->load->view('/teacher/top');
+		$this->load->view('/teacher/left',array('left'=>"1"));
+		$this->load->view("/teacher/course/courseDetailR",array('data'=>$courseInfo,'typeName'=>$typeName,'imageName'=>$imageName));
+		$this->load->view('/teacher/botton');
 	}
 
 }

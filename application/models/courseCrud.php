@@ -92,12 +92,20 @@ class CourseCrud extends CI_Model{
 
 	function read_course_list_by_teacher($teacherID,$type){
 		$this->db->select("CourseID,CourseName,TypeID,State,SubmitLimit,File")->from('courses')->where('TeacherID',$teacherID);
+		$this->db->where("Created",1);
 		if($type!="-1")$this->db->where("TypeID",$type);
 		return $this->db->get()->result();
 	}
-	function read_typeName_by_ID($typeID){
-		$data = $this->db->select("TypeName")->from("coursetype")->where("TypeID",$typeID)->get()->result()[0]->TypeName;
-		return $data;
+	function read_typeName_by_ID($courseID){
+		$typeID = $this->db->select("TypeID")->from("courses")->where("CourseID",$courseID)->get()->result()[0]->TypeID;
+		$typeName = $this->db->select("TypeName")->from("coursetype")->where("TypeID",$typeID)->get()->result()[0]->TypeName;
+		return $typeName;
+	}
+	function push_course($courseID){
+		$this->db->where("CourseID",$courseID)->update("Created",1);
+	}
+	function pull_course($courseID){
+		$this->db->where("CourseID",$courseID)->update("Created",0);
 	}
 }
 ?>

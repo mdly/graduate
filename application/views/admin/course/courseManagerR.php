@@ -54,7 +54,7 @@
                             <th>课程类型</th>                                   
                             <th>提交限制</th>                  
                             <th>状态</th>
-                            <th>已创建完成</th>
+                            <th>操作</th>
                         </tr>
                     </thead>     
                     <tbody>
@@ -63,6 +63,21 @@
                                 $index = $i + 1;
                                 $state = ($data[$i]->State==0)?"关闭":(($data[$i]->State==1)?"开启":"完成");
                                 $operation = "/admin/show_course_detail/".$data[$i]->CourseID;
+                                //($data[$i]->Created?"是":"否")
+
+                                switch ($data[$i]->Created) {
+                                    case '0':
+                                        $operationName = "发布课程";
+                                        $btnType = "class = 'btn btn-primary'";
+                                        $action = "/admin/course_push/".$data[$i]->CourseID;
+                                        break;
+                                    case '1':
+                                        $operationName = "撤回课程";
+                                        $btnType = "class = 'btn btn-success'";
+                                        $action = "/admin/course_pull/".$data[$i]->CourseID;
+                                        break;
+                                    default:break;
+                                }
                                 for($j=0;$j<count($courseType);$j++){
                                     if($courseType[$j]->TypeID==$data[$i]->TypeID){$type=$courseType[$j]->TypeName;break;}
                                 }
@@ -83,8 +98,7 @@
                                         <td>".$type."</td>
                                         <td>".$data[$i]->SubmitLimit."次</td>
                                         <td>".$state."</td>
-                                        <td>".($data[$i]->Created?"是":"否")."</td>
-                                    </tr>";
+                                        <td><a ".$btnType." href=".site_url($operation)." role='button'>".$operationName."</a>                                    </tr>";
                             }
                         ?>
                     </tbody>

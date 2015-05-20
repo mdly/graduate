@@ -99,10 +99,8 @@
 								echo "<option value=".$images[$i]->ImageID.">".$images[$i]->ImageName."</option>";
 							?>
 						</select>
-											<a class="btn btn-default" href="#" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>123</a>
-
 					</div>
-					<label class="col-sm-3"></label>
+					<label class="col-sm-4"></label>
 				</div>
 				<div class="form-group">
 					<label for="imageIDTgt" class="col-sm-4 control-label">靶机镜像</label>

@@ -150,13 +150,117 @@ class Admin extends CI_Controller {
 		$this->load->model("imageCrud");
 		$teachers = $this->userCrud->read_teacher_list();
 		$types = $this->courseCrud->read_type_list();
-		$images = $this->imageCrud->read_image_list();
+		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
+		$targetImage = $this->imageCrud->get_target_image($courseID);
 		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"2"));
-		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'images'=>$images));
+		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
 		$this->load->view('/admin/botton');
 		//$this->load->view("/admin/course/courseDetail",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'images'=>$images));
+	}
+	function course_delete_attacker_image($courseID,$imageID){
+		$this->load->model("imageCrud");
+		$this->imageCrud->delete_attacker_image($courseID,$imageID);
+		//显示新的课程信息
+
+		$this->load->model("courseCrud");
+		$this->load->model("userCrud");
+		$this->load->model("imageCrud");
+		$teachers = $this->userCrud->read_teacher_list();
+		$types = $this->courseCrud->read_type_list();
+		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
+		$targetImage = $this->imageCrud->get_target_image($courseID);
+		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
+		$this->load->view('/admin/top');
+		$this->load->view('/admin/left',array('left'=>"2"));
+		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
+		$this->load->view('/admin/botton');
+
+	}
+
+	function course_add_attacker_image($courseID){
+		$this->load->model('imageCrud');
+		$images = $this->imageCrud->read_image_list();
+		$this->load->view('/admin/top');
+		$this->load->view('/admin/left',array('left'=>"2"));
+		$this->load->view("/admin/course/courseImage",array('data'=>$images,'obj'=>'0','courseID'=>$courseID));//'obj'=0 ==>attacker,'obj'=1 ==>target
+		$this->load->view('/admin/botton');
+
+	}
+	function course_add_attacker_image_action($courseID){
+		$this->load->model('imageCrud');
+		if(!empty($_POST["imageList"])){
+			$images = $_POST["imageList"];
+			for($i=0; $i< count($images); $i++){
+				$this->imageCrud->add_attacker_image($courseID,$images[$i]);
+			}
+		}
+
+		//显示课程信息
+		$this->load->model("courseCrud");
+		$this->load->model("userCrud");
+		$this->load->model("imageCrud");
+		$teachers = $this->userCrud->read_teacher_list();
+		$types = $this->courseCrud->read_type_list();
+		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
+		$targetImage = $this->imageCrud->get_target_image($courseID);
+		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
+		$this->load->view('/admin/top');
+		$this->load->view('/admin/left',array('left'=>"2"));
+		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
+		$this->load->view('/admin/botton');
+	}
+	function course_delete_target_image($courseID,$imageID){
+		$this->load->model("imageCrud");
+		$this->imageCrud->delete_target_image($courseID,$imageID);
+		//显示新的课程信息
+
+		$this->load->model("courseCrud");
+		$this->load->model("userCrud");
+		$this->load->model("imageCrud");
+		$teachers = $this->userCrud->read_teacher_list();
+		$types = $this->courseCrud->read_type_list();
+		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
+		$targetImage = $this->imageCrud->get_target_image($courseID);
+		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
+		$this->load->view('/admin/top');
+		$this->load->view('/admin/left',array('left'=>"2"));
+		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
+		$this->load->view('/admin/botton');
+
+	}
+	function course_add_target_image($courseID){
+		$this->load->model('imageCrud');
+		$images = $this->imageCrud->read_image_list();
+		$this->load->view('/admin/top');
+		$this->load->view('/admin/left',array('left'=>"2"));
+		$this->load->view("/admin/course/courseImage",array('data'=>$images,'obj'=>'1','courseID'=>$courseID));//'obj'=0 ==>attacker,'obj'=1 ==>target
+		$this->load->view('/admin/botton');
+
+	}
+	function course_add_target_image_action($courseID){
+		$this->load->model('imageCrud');
+		if(!empty($_POST["imageList"])){
+			$images = $_POST["imageList"];
+			for($i=0; $i< count($images); $i++){
+				$this->imageCrud->add_target_image($courseID,$images[$i]);
+			}
+		}
+
+		//显示课程信息
+		$this->load->model("courseCrud");
+		$this->load->model("userCrud");
+		$this->load->model("imageCrud");
+		$teachers = $this->userCrud->read_teacher_list();
+		$types = $this->courseCrud->read_type_list();
+		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
+		$targetImage = $this->imageCrud->get_target_image($courseID);
+		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
+		$this->load->view('/admin/top');
+		$this->load->view('/admin/left',array('left'=>"2"));
+		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
+		$this->load->view('/admin/botton');
 	}
 
 	function search_course($type){
@@ -192,7 +296,39 @@ class Admin extends CI_Controller {
 		$this->load->view('/admin/course/courseCreateR',array('teachers'=>$teachers,'types'=>$types,'images'=>$images));
 		$this->load->view('/admin/botton');		
 	}
-	function update_course_action($courseID){		
+	function course_push($courseID){
+		$this->load->model("courseCrud");
+		$this->courseCrud->push_course($courseID);
+		$this->load->model("userCrud");
+		$this->load->model("imageCrud");
+		$teachers = $this->userCrud->read_teacher_list();
+		$types = $this->courseCrud->read_type_list();
+		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
+		$targetImage = $this->imageCrud->get_target_image($courseID);
+		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
+		$this->load->view('/admin/top');
+		$this->load->view('/admin/left',array('left'=>"2"));
+		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
+		$this->load->view('/admin/botton');
+
+	}
+	function course_pull($courseID){
+		$this->load->model("courseCrud");
+		$this->courseCrud->pull_course($courseID);
+		$this->load->model("userCrud");
+		$this->load->model("imageCrud");
+		$teachers = $this->userCrud->read_teacher_list();
+		$types = $this->courseCrud->read_type_list();
+		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
+		$targetImage = $this->imageCrud->get_target_image($courseID);
+		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
+		$this->load->view('/admin/top');
+		$this->load->view('/admin/left',array('left'=>"2"));
+		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
+		$this->load->view('/admin/botton');
+
+	}
+	function update_course_action($courseID){
 		$this->load->model('courseCrud');
 		$config['upload_path']='./uploads';
 		$config['allowed_types']='pdf|doc|docx';
@@ -202,23 +338,19 @@ class Admin extends CI_Controller {
 		$data = $this->upload->do_upload('file');
 		if($data){
 			$file_info = array('upload_data'=>$this->upload->data());
-		}else{
-			$error=array('error'=>$this->upload->display_errors());
-			$file_info['upload_data']['full_path']="";
-			var_dump($error);
-		}
-		$newCourse = array('CourseName'=>$_POST['courseName'],'TeacherID'=>$_POST['teacherID'],
+			$newCourse = array('CourseName'=>$_POST['courseName'],'TeacherID'=>$_POST['teacherID'],
 			'TypeID'=>$_POST['typeID'],'Duration'=>$_POST['duration'],'File'=>$file_info['upload_data']['full_path'],
 			'SubmitLimit'=>$_POST['submitLimit'],'CourseDesc'=>$_POST['courseDesc'],
-			'StartTime'=>$_POST['startTime'],'StopTime'=>$_POST['stopTime'],'Location'=>$_POST['location'],
-			'ImageIDAtk'=>$_POST['imageIDAtk'],'ImageIDTgt'=>$_POST['imageIDTgt']);
-		//$newType = array('TypeName'=>$_POST['typeName'],'TypeDesc'=>$_POST['Description']);
-		if($newCourse['CourseName']&&$newCourse['TeacherID']
-			&&$newCourse['TypeID']&&$newCourse['File']&&$newCourse['SubmitLimit']
-			&&$newCourse['ImageIDAtk']&&$newCourse['ImageIDTgt']){
-			$newCourse['Created']='1';
+			'StartTime'=>$_POST['startTime'],'StopTime'=>$_POST['stopTime'],'Location'=>$_POST['location']);
+			//$newType = array('TypeName'=>$_POST['typeName'],'TypeDesc'=>$_POST['Description']);
 		}else{
-			$newCourse['Created']='0';
+			//$error=array('error'=>$this->upload->display_errors());
+			//$file_info['upload_data']['full_path']="";
+			//var_dump($error);
+			$newCourse = array('CourseName'=>$_POST['courseName'],'TeacherID'=>$_POST['teacherID'],
+			'TypeID'=>$_POST['typeID'],'Duration'=>$_POST['duration'],
+			'SubmitLimit'=>$_POST['submitLimit'],'CourseDesc'=>$_POST['courseDesc'],
+			'StartTime'=>$_POST['startTime'],'StopTime'=>$_POST['stopTime'],'Location'=>$_POST['location']);
 		}
 		$this->courseCrud->update_course_detail($newCourse,$courseID);	
 		$course = $this->courseCrud->read_course_list("-1","1");
@@ -229,43 +361,6 @@ class Admin extends CI_Controller {
 		$this->load->view('/admin/botton');
 	}
 	function create_course_action(){
-		//$this->load->model('crud');
-		//处理上传的文件
-		/*
-		$this->load->model('courseCrud');
-		$config['upload_path']='uploads';
-		$config['allowed_types']='pdf|doc|docx';
-		$config['max_size']='10240000';//10mb
-		$config['file_name']  = time();
-		$this->load->library('upload',$config);		
-		$data = $this->upload->do_upload('file');
-		//var_dump($data);
-		if($data){
-			$file_info = array('upload_data'=>$this->upload->data());
-			//var_dump($file_info);
-		}else{
-			$error=array('error'=>$this->upload->display_errors());
-			$file_info['upload_data']['full_path']="";
-			//var_dump($error);
-		}
-		$newCourse = array('CourseName'=>$_POST['courseName'],'TeacherID'=>$_POST['teacherID'],
-			'TypeID'=>$_POST['typeID'],'Duration'=>$_POST['duration'],'File'=>$file_info['upload_data']['full_path'],
-			'SubmitLimit'=>$_POST['submitLimit'],'CourseDesc'=>$_POST['courseDesc'],
-			'StartTime'=>$_POST['startTime'],'StopTime'=>$_POST['stopTime'],
-			'Location'=>$_POST['location'],'ImageID'=>"12345");
-		if($newCourse['CourseName']&&$newCourse['TeacherID']
-			&&$newCourse['TypeID']&&$newCourse['File']
-			&&$newCourse['SubmitLimit']&&$newCourse['ImageID']){
-			$newCourse['Created']='1';
-		}else{
-			$newCourse['Created']='0';
-		}
-		//$newType = array('TypeName'=>$_POST['typeName'],'TypeDesc'=>$_POST['Description']);
-		$this->courseCrud->create_course($newCourse);
-		$course = $this->courseCrud->read_course_list();
-		$courseType = $this->courseCrud->read_type_list();
-		$this->load->view("/admin/course/courseManager",array('data' =>$course,'courseType'=>$courseType,'activeTop'=>"0",'selectColumn'=>"0"));
-*/
 		$this->load->model('courseCrud');
 		$config['upload_path']='./uploads';
 		$config['allowed_types']='pdf|doc|docx';
@@ -286,13 +381,6 @@ class Admin extends CI_Controller {
 			'StartTime'=>$_POST['startTime'],'StopTime'=>$_POST['stopTime'],'Location'=>$_POST['location'],
 			'ImageIDAtk'=>$_POST['imageIDAtk'],'ImageIDTgt'=>$_POST['imageIDTgt']);
 		//$newType = array('TypeName'=>$_POST['typeName'],'TypeDesc'=>$_POST['Description']);
-		if($newCourse['CourseName']&&$newCourse['TeacherID']
-			&&$newCourse['TypeID']&&$newCourse['File']&&$newCourse['SubmitLimit']
-			&&$newCourse['ImageIDAtk']&&$newCourse['ImageIDTgt']){
-			$newCourse['Created']='1';
-		}else{
-			$newCourse['Created']='0';
-		}
 		$this->courseCrud->create_course($newCourse);	
 		$course = $this->courseCrud->read_course_list("-1","1");
 		$courseType = $this->courseCrud->read_type_list();
