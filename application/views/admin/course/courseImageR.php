@@ -1,7 +1,7 @@
 <div class="col-xs-10">
     <div class="table-responsive">
         <div>
-            <form class="form-horizontal" method="post" action="<?php $operation=($obj)?'course_add_target_image_action':'course_add_attacker_image_action'; echo site_url('/admin/'.$operation.'/'.$courseID)?>">
+            <form class="form-horizontal" method="post" action="<?php echo site_url('/admin/course_add_image_action/'.$obj.'/'.$courseID)?>">
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>

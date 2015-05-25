@@ -17,19 +17,20 @@ class Admin extends CI_Controller {
 	public function index(){
 		//admin用户登录进来以后的第一个页面
 		$this->load->model('openstack');
-		$userName = 'symol';
-		$password = 'God!sMe';
+		$userName = 'admin';
+		$password = 'xuexihao';
 		$token = $this->openstack->authenticate_v2($userName,$password);
+		//print_r($token)
 		//print_r($token);
-		$tokenExpires = $token['access']['token']['expires'];
+		//$tokenExpires = $token['access']['token']['expires'];
 		$tokenID = $token['access']['token']['id'];
-		//echo $tokenExpires;
-		//获取到expires以后还可以判断是否过期来决定是否要重新申请一个新的token。
-		//echo "<br>";
-		//echo $tokenID;
-		//echo $token;
-		$imageOS = $this->openstack->get_image_list($tokenID)['images'];
-		$imageOSCount = count($imageOS);
+		$tenantID = $token['access']['token']['tenant']['id'];
+		//$imageOS = $this->openstack->get_resources($tokenID,$tenantID,'image')['images'];
+		//$imageOS = $this->openstack->get_resources($tokenID)['images'];
+		$this->load->model('imageCrud');
+		$this->imageCrud->syc_openstack();
+		$image=$this->imageCrud->count_image();
+		//$imageOSCount = count($imageOS);
 		//echo $imageOSCount;
 		//echo "the image_OS = ";
 		//print_r($image_OS);
@@ -41,7 +42,8 @@ class Admin extends CI_Controller {
 		$image = $this->imageCrud->count_image();
 		$data = array('NAdmin' => $user[0],'NTeacher' => $user[1],'NStudent' => $user[2],
 			'NCourseOff' => $course[0],'NCourseOn' => $course[1],'NCourseDone' => $course[2],
-			'NImage' => $imageOSCount);
+			//'NImage' => $imageOSCount);
+			'NImage' => $image);
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"0"));
 		$this->load->view('/admin/overviewR',$data);
@@ -150,116 +152,66 @@ class Admin extends CI_Controller {
 		$this->load->model("imageCrud");
 		$teachers = $this->userCrud->read_teacher_list();
 		$types = $this->courseCrud->read_type_list();
-		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
-		$targetImage = $this->imageCrud->get_target_image($courseID);
+		$images = $this->imageCrud->read_courseImage_list($courseID);
+		//$attackerImage = $this->imageCrud->get_attacker_image($courseID);
+		//$targetImage = $this->imageCrud->get_target_image($courseID);
 		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"2"));
-		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
+		//$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
+		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$images['attackerImage'],'targetImage'=>$images['targetImage']));
 		$this->load->view('/admin/botton');
 		//$this->load->view("/admin/course/courseDetail",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'images'=>$images));
 	}
-	function course_delete_attacker_image($courseID,$imageID){
-		$this->load->model("imageCrud");
-		$this->imageCrud->delete_attacker_image($courseID,$imageID);
-		//显示新的课程信息
 
-		$this->load->model("courseCrud");
-		$this->load->model("userCrud");
-		$this->load->model("imageCrud");
-		$teachers = $this->userCrud->read_teacher_list();
-		$types = $this->courseCrud->read_type_list();
-		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
-		$targetImage = $this->imageCrud->get_target_image($courseID);
-		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
-		$this->load->view('/admin/top');
-		$this->load->view('/admin/left',array('left'=>"2"));
-		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
-		$this->load->view('/admin/botton');
-
-	}
-
-	function course_add_attacker_image($courseID){
+	function course_add_image($isTarget,$courseID){
 		$this->load->model('imageCrud');
 		$images = $this->imageCrud->read_image_list();
-		$this->load->view('/admin/top');
-		$this->load->view('/admin/left',array('left'=>"2"));
-		$this->load->view("/admin/course/courseImage",array('data'=>$images,'obj'=>'0','courseID'=>$courseID));//'obj'=0 ==>attacker,'obj'=1 ==>target
-		$this->load->view('/admin/botton');
-
+		$this->load->view("/admin/top");
+		$this->load->view("/admin/left",array('left'=>"2"));
+		$this->load->view("/admin/course/courseImageR",array('data'=>$images,'obj'=>$isTarget,'courseID'=>$courseID));//'obj'=0 ==>attacker,'obj'=1 ==>target
+		$this->load->view("/admin/botton");
 	}
-	function course_add_attacker_image_action($courseID){
+	function course_add_image_action($isTarget,$courseID){
 		$this->load->model('imageCrud');
-		if(!empty($_POST["imageList"])){
-			$images = $_POST["imageList"];
-			for($i=0; $i< count($images); $i++){
-				$this->imageCrud->add_attacker_image($courseID,$images[$i]);
+		if(!empty($_POST['imageList'])){
+			$images = $_POST['imageList'];
+			//print_r($images);
+			for ($i=0; $i < count($images); $i++) {
+				$this->imageCrud->add_courseImage($isTarget,$courseID,$images[$i]);
 			}
 		}
-
 		//显示课程信息
 		$this->load->model("courseCrud");
 		$this->load->model("userCrud");
 		$this->load->model("imageCrud");
 		$teachers = $this->userCrud->read_teacher_list();
 		$types = $this->courseCrud->read_type_list();
-		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
-		$targetImage = $this->imageCrud->get_target_image($courseID);
+		$images = $this->imageCrud->read_courseImage_list($courseID);
 		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"2"));
-		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
+		$this->load->view("/admin/course/courseDetailR",
+			array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,
+				'attackerImage'=>$images['attackerImage'],'targetImage'=>$images['targetImage']));
 		$this->load->view('/admin/botton');
-	}
-	function course_delete_target_image($courseID,$imageID){
-		$this->load->model("imageCrud");
-		$this->imageCrud->delete_target_image($courseID,$imageID);
-		//显示新的课程信息
 
+	}
+	function course_delete_image($isTarget,$courseID,$imageID){
+		$this->load->model("imageCrud");
+		$this->imageCrud->delete_courseImage($isTarget,$courseID,$imageID);
 		$this->load->model("courseCrud");
 		$this->load->model("userCrud");
 		$this->load->model("imageCrud");
 		$teachers = $this->userCrud->read_teacher_list();
 		$types = $this->courseCrud->read_type_list();
-		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
-		$targetImage = $this->imageCrud->get_target_image($courseID);
+		$images = $this->imageCrud->read_courseImage_list($courseID);
 		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"2"));
-		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
-		$this->load->view('/admin/botton');
-
-	}
-	function course_add_target_image($courseID){
-		$this->load->model('imageCrud');
-		$images = $this->imageCrud->read_image_list();
-		$this->load->view('/admin/top');
-		$this->load->view('/admin/left',array('left'=>"2"));
-		$this->load->view("/admin/course/courseImage",array('data'=>$images,'obj'=>'1','courseID'=>$courseID));//'obj'=0 ==>attacker,'obj'=1 ==>target
-		$this->load->view('/admin/botton');
-
-	}
-	function course_add_target_image_action($courseID){
-		$this->load->model('imageCrud');
-		if(!empty($_POST["imageList"])){
-			$images = $_POST["imageList"];
-			for($i=0; $i< count($images); $i++){
-				$this->imageCrud->add_target_image($courseID,$images[$i]);
-			}
-		}
-
-		//显示课程信息
-		$this->load->model("courseCrud");
-		$this->load->model("userCrud");
-		$this->load->model("imageCrud");
-		$teachers = $this->userCrud->read_teacher_list();
-		$types = $this->courseCrud->read_type_list();
-		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
-		$targetImage = $this->imageCrud->get_target_image($courseID);
-		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
-		$this->load->view('/admin/top');
-		$this->load->view('/admin/left',array('left'=>"2"));
-		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
+		$this->load->view("/admin/course/courseDetailR",
+			array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,
+				'attackerImage'=>$images['attackerImage'],'targetImage'=>$images['targetImage']));
 		$this->load->view('/admin/botton');
 	}
 
@@ -271,7 +223,8 @@ class Admin extends CI_Controller {
 		$course = $this->courseCrud->search_course_list($type,"1",$column,$keyword);
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"2"));
-		$this->load->view("/admin/course/courseManagerR",array('data' =>$course,'courseType'=>$courseType,'activeTop'=>$type,'selectColumn'=>$column));
+		$this->load->view("/admin/course/courseManagerR",
+			array('data' =>$course,'courseType'=>$courseType,'activeTop'=>$type,'selectColumn'=>$column));
 		$this->load->view('/admin/botton');
 		//$this->load->view("/admin/course/courseManager",array('data' =>$course,'courseType'=>$courseType,'activeTop'=>$type,'selectColumn'=>$column));
 	}
@@ -301,15 +254,23 @@ class Admin extends CI_Controller {
 		$this->courseCrud->push_course($courseID);
 		$this->load->model("userCrud");
 		$this->load->model("imageCrud");
-		$teachers = $this->userCrud->read_teacher_list();
-		$types = $this->courseCrud->read_type_list();
-		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
-		$targetImage = $this->imageCrud->get_target_image($courseID);
-		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
+		//$teachers = $this->userCrud->read_teacher_list();
+		//$types = $this->courseCrud->read_type_list();
+		//$attackerImage = $this->imageCrud->get_attacker_image($courseID);
+		//$targetImage = $this->imageCrud->get_target_image($courseID);
+		//$courseInfo = $this->courseCrud->read_course_Detail($courseID);
+		$type="-1";
+		$courseType = $this->courseCrud->read_type_list();
+		$course = $this->courseCrud->read_course_list($type,"1");
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"2"));
-		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
+		$this->load->view("/admin/course/courseManagerR",array('data'=>$course,'courseType'=>$courseType,'activeTop'=>$type,'selectColumn'=>"0",'keyword'=>""));
 		$this->load->view('/admin/botton');
+		/*
+		$this->load->view('/admin/top');
+		$this->load->view('/admin/left',array('left'=>"2"));
+		$this->load->view("/admin/course/courseManagerR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
+		$this->load->view('/admin/botton');*/
 
 	}
 	function course_pull($courseID){
@@ -317,14 +278,12 @@ class Admin extends CI_Controller {
 		$this->courseCrud->pull_course($courseID);
 		$this->load->model("userCrud");
 		$this->load->model("imageCrud");
-		$teachers = $this->userCrud->read_teacher_list();
-		$types = $this->courseCrud->read_type_list();
-		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
-		$targetImage = $this->imageCrud->get_target_image($courseID);
-		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
+		$type="-1";
+		$courseType = $this->courseCrud->read_type_list();
+		$course = $this->courseCrud->read_course_list($type,"1");
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"2"));
-		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
+		$this->load->view("/admin/course/courseManagerR",array('data'=>$course,'courseType'=>$courseType,'activeTop'=>$type,'selectColumn'=>"0",'keyword'=>""));
 		$this->load->view('/admin/botton');
 
 	}
@@ -450,7 +409,9 @@ class Admin extends CI_Controller {
 	}
 
 	function image_manager() {		
+		//$this->load->model('openstack');
 		$this->load->model('imageCrud');
+		$this->imageCrud->syc_openstack();
 /*
 		$this->load->model('openstack');
 		$userName = 'symol';
@@ -465,12 +426,16 @@ class Admin extends CI_Controller {
 		}
 		*/
 		$images = $this->imageCrud->read_image_list();
+		//print_r($images);
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"3"));
 		$this->load->view('/admin/image/imageManagerR',array('data'=>$images));
 		$this->load->view('/admin/botton');
 	}
 	function image_create(){
+		//在openstack中创建image
+		//在数据库中更新image
+		//$this->load->openstack;	
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"3"));
 		$this->load->view('/admin/image/imageCreateR');

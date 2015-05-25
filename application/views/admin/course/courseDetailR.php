@@ -128,7 +128,7 @@
 								<input type='text' class='form-control' value=".$attackerImage[$i]->ImageName." disabled>
 							</div>
 							<div class='col-sm-4'>
-								<a class='btn btn-default' href=".site_url('/admin/course_delete_attacker_image/'.$data->CourseID."/".$attackerImage[$i]->ImageID)."><span class='glyphicon glyphicon-minus' aria-hidden='true'></span></a>
+								<a class='btn btn-default' href=".site_url('/admin/course_delete_image/0/'.$data->CourseID."/".$attackerImage[$i]->ImageID)."><span class='glyphicon glyphicon-minus' aria-hidden='true'></span></a>
 							</div>
 							<label class='col-sm-4'></label>
 							";
@@ -142,7 +142,7 @@
 				<div class="form-group">
 					<label class="col-sm-4"></label>
 					<div class=" col-sm-4">
-						<a class="btn btn-default" href="<?php $operation = '/admin/course_add_attacker_image/'.$data->CourseID;echo site_url($operation);?>" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加新镜像</a>
+						<a class="btn btn-default" href="<?php $operation = '/admin/course_add_image/0/'.$data->CourseID;echo site_url($operation);?>" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加新镜像</a>
 					</div>
 					<label class="col-sm-4"></label>
 				</div>
@@ -162,7 +162,7 @@
 								<input type='text' class='form-control' value=".$targetImage[$i]->ImageName." disabled>
 							</div>
 							<div class='col-sm-4'>
-								<a class='btn btn-default' href=".site_url('/admin/course_delete_target_image/'.$data->CourseID."/".$targetImage[$i]->ImageID)."><span class='glyphicon glyphicon-minus' aria-hidden='true'></span></a>
+								<a class='btn btn-default' href=".site_url('/admin/course_delete_image/1/'.$data->CourseID."/".$targetImage[$i]->ImageID)."><span class='glyphicon glyphicon-minus' aria-hidden='true'></span></a>
 							</div>
 							<label class='col-sm-4'></label>
 							";
@@ -171,15 +171,10 @@
 					?>
 					<label class="col-sm-4"></label>
 				</div>
-
-
-
-
-
 				<div class="form-group">
 					<label class="col-sm-4"></label>
 					<div class=" col-sm-4">
-						<a class="btn btn-default" href="<?php $operation = '/admin/course_add_target_image/'.$data->CourseID;echo site_url($operation);?>" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加新镜像</a>
+						<a class="btn btn-default" href="<?php $operation = '/admin/course_add_image/1/'.$data->CourseID;echo site_url($operation);?>" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加新镜像</a>
 					</div>
 					<label class="col-sm-4"></label>
 				</div>

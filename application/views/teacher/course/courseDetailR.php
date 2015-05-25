@@ -14,38 +14,9 @@
 					<label class="col-sm-4"></label>
 				</div>
 				<div class="form-group">
-					<label for="teacherID" class="col-sm-4 control-label">教师</label>
-						<div class="col-sm-4">
-						<select class="form-control" id="teacherID" name="teacherID">
-							<?php
-							for ($i=0;$i<count($teachers);$i++){
-								if ($data->TeacherID==$teachers[$i]->UserNum) {
-									echo "<option value=".$teachers[$i]->UserNum." selected='selected'>".$teachers[$i]->UserName."</option>";
-								}
-								else{
-									echo "<option value=".$teachers[$i]->UserNum.">".$teachers[$i]->UserName."</option>";
-								}
-							}
-							?>
-						</select>
-					</div>
-					<label class="col-sm-4"></label>
-				</div>
-				<div class="form-group">
 					<label for="typeID" class="col-sm-4 control-label">课程类型</label>
-						<div class="col-sm-4">
-						<select class="form-control" id="typeID" name="typeID">												
-							<?php
-							for ($i=0;$i<count($types);$i++){
-								if ($data->TypeID==$types[$i]->TypeID) {
-									echo "<option value=".$types[$i]->TypeID." selected='selected'>".$types[$i]->TypeName."</option>";
-								}
-								else{
-									echo "<option value=".$types[$i]->TypeID.">".$types[$i]->TypeName."</option>";
-								}
-							}
-							?>
-						</select>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" id="typeID" name="typeID" value="<?php echo $typeName;?>">
 					</div>
 					<label class="col-sm-4"></label>
 				</div>
@@ -106,21 +77,37 @@
 				</div>
 				<div class="form-group">
 					<label for="imageIDAtk" class="col-sm-4 control-label">攻击机镜像</label>
-					<div class="col-sm-4">
-						<input type="text" class="form-control" id="imageIDAtk" name="imageIDAtk" value="<?php echo $imageName->ImageIDAtk;?>">
-					</div>
+					<?php
+						for ($i=0; $i < count($attackerImage); $i++) {
+							echo "
+							<div class='col-sm-4'>
+								<input type='text' class='form-control' value=".$attackerImage[$i]->ImageName." disabled>
+							</div>
+							<label class='col-sm-4'></label>
+							<label class='col-sm-4'></label>
+							";
+						}
+					?>
 					<label class="col-sm-4"></label>
 				</div>
 				<div class="form-group">
 					<label for="imageIDTgt" class="col-sm-4 control-label">靶机镜像</label>
-					<div class="col-sm-4">
-						<input type="text" class="form-control" id="imageIDTgt" name="imageIDTgt" value="<?php echo $imageName->ImageIDTgt;?>">
-					</div>
+					<?php
+						for ($i=0; $i < count($targetImage); $i++) {
+							echo "
+							<div class='col-sm-4'>
+								<input type='text' class='form-control' value=".$targetImage[$i]->ImageName." disabled>
+							</div>
+							<label class='col-sm-4'></label>
+							<label class='col-sm-4'></label>
+							";
+						}
+					?>
 					<label class="col-sm-4"></label>
 				</div>
 				<div class="form-group">
 					<div class="col-sm-offset-2 col-sm-6" align="right">
-						<a href="<?php echo site_url('/admin/course_manager')?>">取消</a>
+						<a href="<?php echo site_url('/teacher/course_manager')?>">取消</a>
 						<button type="submit" class="btn btn-defualt">提交修改</button>
 					</div>
 				</div> 

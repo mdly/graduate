@@ -26,30 +26,6 @@ class ImageCrud extends CI_Model{
 		return $data;
 	}
 
-	function add_attacker_image($courseID,$imageID){
-		$ImageName = $this->db->select("ImageName")->from("images")->where("ImageID",$imageID)->get()->result()[0]->ImageName;
-		$this->db->insert("attackerimage",array('CourseID'=>$courseID,'ImageID'=>$imageID,'ImageName'=>$ImageName));
-	}
-	function get_attacker_image($courseID){
-		return $this->db->select("*")->from("attackerimage")->where("CourseID",$courseID)->get()->result();
-	}
-	function delete_attacker_image($courseID,$imageID){
-		$this->db->where("CourseID",$courseID)->where("ImageID",$imageID)->delete("attackerimage");
-	}
-
-
-	function add_target_image($courseID,$imageID){
-		$ImageName = $this->db->select("ImageName")->from("images")->where("ImageID",$imageID)->get()->result()[0]->ImageName;
-		$this->db->insert("targetimage",array('CourseID'=>$courseID,'ImageID'=>$imageID,'ImageName'=>$ImageName));
-	}
-	function get_target_image($courseID){
-		return $this->db->select("*")->from("targetimage")->where("CourseID",$courseID)->get()->result();
-	}
-	function delete_target_image($courseID,$imageID){
-		$this->db->where("CourseID",$courseID)->where("ImageID",$imageID)->delete("targetimage");
-	}
-	
-
 	function read_imageName_by_ID($courseID){
 		$imageID = $this->db->select("ImageIDAtk,ImageIDTgt")->from("courses")->where("CourseID",$courseID)->get()->result()[0];
 		$attackerID = explode(';',$imageID->ImageIDAtk);
@@ -75,5 +51,55 @@ class ImageCrud extends CI_Model{
 		$data = array("ImageIDAtk"=>$attacherID,"ImageIDTgt"=>$targetID);
 		return $data;
 	}
+	function read_imageURL_by_imageID($imageID){
+		return $this->db->select("ImageURL")->from("images")->where("ImageID",$imageID)->get()->result()[0]->ImageURL;
+	}
+
+	function read_courseImage_list($courseID,$isTarget="-1"){
+		//echo "courseID=".$courseID;
+		if($isTarget!="-1"){
+			$data=$this->db->select("*")->from("courseImage")->where("CourseID",$courseID)->where("isTarget",$isTarget)->get()->result();
+		}else{
+			$attackerImage = $this->db->select("*")->from("courseImage")->where("CourseID",$courseID)->where("isTarget",0)->get()->result();
+			$targetImage = $this->db->select("*")->from("courseImage")->where("CourseID",$courseID)->where("isTarget",1)->get()->result();
+			$data = array("attackerImage"=>$attackerImage,"targetImage"=>$targetImage);
+		}
+		//print_r($data);
+		return $data;
+	}
+	function add_courseImage($isTarget,$courseID,$imageID){
+	$data = $this->db->select("*")->from("courseImage")->where("CourseID",$courseID)->where("ImageID",$imageID)->where("isTarget",$isTarget)->get()->result();
+		
+		if($data){
+			print_r($data);
+			echo"this image has been add into the course";
+		}else{
+			$image = $this->db->select("ImageName,ImageURL")->from('images')->where("ImageID",$imageID)->get()->result()[0];
+			$imageName = $image->ImageName;
+			$imageURL = $image->ImageURL;
+			$data = array("ImageID"=>$imageID,"ImageName"=>$imageName,"ImageURL"=>$imageURL,"CourseID"=>$courseID,"isTarget"=>$isTarget);
+			$this->db->insert("courseimage",$data);
+		}
+	}
+	function delete_courseImage($isTarget,$courseID,$imageID){
+		$this->db->where("isTarget",$isTarget)->where("CourseID",$courseID)->where("ImageID",$imageID)->delete("courseImage");
+	}
+	function syc_openstack(){
+		$this->load->model("openstack");
+		$token = $this->openstack->authenticate_v2("admin","xuexihao");
+		//function get_resources($tokenID,$tenantID,$resources)
+		$images = $this->openstack->get_resources($token['access']['token']['id'],$token['access']['token']['tenant']['id'],'image')['images'];
+		//$images = $this->openstack->get_resources($token['access']['token']['id'],$token['access']['token']['tenant']['id'],'image');
+		//print_r($images);
+		//只有那些已经创建完成的才能被添加到数据库中！
+		$this->db->like("ImageID","")->delete('images');
+		for ($i=0; $i < count($images); $i++) {
+			//if($images[$i]);
+			$data = array('ImageID'=>$images[$i]['id'],"ImageName"=>$images[$i]['name'],"ImageURL"=>$images[$i]['links'][0]['href']);
+			$this->db->insert('images',$data);
+		}	
+	}
+	
+
 }
 ?>

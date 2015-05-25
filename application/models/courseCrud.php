@@ -82,14 +82,16 @@ class CourseCrud extends CI_Model{
 		else{
 			for ($i=0; $i<3; $i++) {
 				$this->db->select("count(*) AS COUNT")->from("courses")->where("State",$i);
-				$this->db->where("TeacherID",$userNum);
+				$this->db->where("Created",1)->where("TeacherID",$userNum);
 				$data[] = $this->db->get()->result()[0]->COUNT;
 			}
 		}
 			
 		return $data;
 	}
-
+	function count_course_student($studentID){
+		$all = $this->db->select("count(*) AS COUNT")->from("courses")->where("State","");
+	}
 	function read_course_list_by_teacher($teacherID,$type){
 		$this->db->select("CourseID,CourseName,TypeID,State,SubmitLimit,File")->from('courses')->where('TeacherID',$teacherID);
 		$this->db->where("Created",1);
@@ -102,10 +104,33 @@ class CourseCrud extends CI_Model{
 		return $typeName;
 	}
 	function push_course($courseID){
-		$this->db->where("CourseID",$courseID)->update("Created",1);
+		$this->db->where("CourseID",$courseID)->update("courses",array("Created"=>1));
 	}
 	function pull_course($courseID){
-		$this->db->where("CourseID",$courseID)->update("Created",0);
+		//要检测教师是否已经开启课程，若开启了该课程，并且学生已经选择了该课程，则向每个学生以及教师发送邮件通知该课程已经撤回
+		//然后将课程State改为0,(off)
+		//课程Created选项改为1
+		$State = $this->db->select("State")->from("courses")->where("CourseID",$courseID)->get()->result()[0]->State;
+		if($State=="1"){
+			//发送邮件
+			$this->db->where("CourseID",$courseID)->update("courses",array("State"=>0));
+		}
+		$this->db->where("CourseID",$courseID)->update("courses",array("Created"=>0));
+	}
+	function start_course($courseID){
+		$this->db->where("CourseID",$courseID)->update("courses",array("State"=>1));
+	}
+	function stop_course($courseID){
+		$this->db->where("CourseID",$courseID)->update("courses",array("State"=>0));
+	}
+	function finish_course($courseID){
+		$this->db->where("CourseID",$courseID)->update("courses",array("State"=>2));
+	}
+	function read_vm($courseID,$userNum){
+		$targetVM = $this->db->select("*")->where("CourseID",$courseID)->where("UserNum",$userNum)->where("isTarget",1)->from("coursevm")->get()->result();
+		$attackerVM = $this->db->select("*")->where("CourseID",$courseID)->where("UserNum",$userNum)->where("isTarget",0)->from("coursevm")->get()->result();
+		$data = array('targetVM' => $targetVM, 'attackerVM'=>$attackerVM);
+		return $data;
 	}
 }
 ?>

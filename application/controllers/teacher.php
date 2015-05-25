@@ -62,12 +62,33 @@ class Teacher extends CI_Controller{
 		$this->load->model("userCrud");
 		$this->load->model("imageCrud");
 		$typeName = $this->courseCrud->read_typeName_by_ID($courseID);
-		$imageName = $this->imageCrud->read_imageName_by_ID($courseID);
 		$courseInfo = $this->courseCrud->read_course_Detail($courseID);
+		$attackerImage = $this->imageCrud->get_attacker_image($courseID);
+		$targetImage = $this->imageCrud->get_target_image($courseID);
 		$this->load->view('/teacher/top');
 		$this->load->view('/teacher/left',array('left'=>"1"));
-		$this->load->view("/teacher/course/courseDetailR",array('data'=>$courseInfo,'typeName'=>$typeName,'imageName'=>$imageName));
+		$this->load->view("/teacher/course/courseDetailR",array('data'=>$courseInfo,'typeName'=>$typeName,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
 		$this->load->view('/teacher/botton');
+	}
+	function start_course($courseID){
+		$this->load->model('courseCrud');
+		$this->courseCrud->start_course($courseID);
+		$type="-1";
+		$userNum = $this->session->userdata('s_id');
+		$courseType = $this->courseCrud->read_type_list();
+		$course = $this->courseCrud->read_course_list_by_teacher($userNum,$type);
+		$Nstudent = array();
+		$typeName = array();
+		for ($i=0; $i < count($course); $i++) {
+			$Nstudent[] = $this->selectCourse->count_student_by_course($course[$i]->CourseID);
+			if (!$Nstudent[$i])$Nstudent[$i]=0;
+			$typeName[] = $this->courseCrud->read_typeName_by_ID($course[$i]->CourseID);
+		}
+		$this->load->view('/teacher/top');
+		$this->load->view('/teacher/left',array('left'=>"1"));
+		$this->load->view("/teacher/course/courseManagerR",array('data'=>$course,'NStudent'=>$Nstudent,'typeName'=>$typeName,'courseType'=>$courseType,'activeTop'=>$type,'selectColumn'=>"0",'keyword'=>""));
+		$this->load->view('/teacher/botton');
+
 	}
 
 }

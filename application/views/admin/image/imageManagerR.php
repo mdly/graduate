@@ -12,7 +12,6 @@
                             <th></th>
                             <th>镜像号</th>
                             <th>镜像名称</th>
-                            <th>镜像描述</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,7 +30,6 @@
                                         </td>
                                         <td>".$data[$i]->ImageID."</td>
                                         <td>".$data[$i]->ImageName."</td>
-                                        <td>".$data[$i]->ImageDesc."</td>
                                     </tr>";
                             }
                         ?>

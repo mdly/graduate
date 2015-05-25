@@ -98,7 +98,7 @@
                                         <td>".$type."</td>
                                         <td>".$data[$i]->SubmitLimit."次</td>
                                         <td>".$state."</td>
-                                        <td><a ".$btnType." href=".site_url($operation)." role='button'>".$operationName."</a>                                    </tr>";
+                                        <td><a ".$btnType." href=".site_url($action)." role='button'>".$operationName."</a>                                    </tr>";
                             }
                         ?>
                     </tbody>
