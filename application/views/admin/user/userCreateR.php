@@ -43,7 +43,10 @@
 				<div class="form-group">
 					<label for="Gender" class="col-sm-4 control-label">性别</label>
 					<div class="col-sm-4">
-						<input type="text" class="form-control" id="Gender" name="Gender">
+						<select class="form-control" id="Gender" name="Gender">
+							<option value='男'>男</option>
+							<option value='女'>女</option>
+						</select>
 					</div>
 					<label class="col-sm-4"></label>
 				</div>

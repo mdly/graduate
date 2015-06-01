@@ -1,4 +1,19 @@
 <div class="col-xs-10">
+    <?php 
+    if($result){
+        if (!$result['success']){
+            $msgType="alert-success";
+        }else{
+            $msgType="alert-danger";
+        }
+        if($result['message']){
+            echo "<div class='alert ".$msgType." alert-dismissible' role='alert'>
+        <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>
+        <strong>".$result['message']."</strong></div>";
+        }
+    }
+
+    ?>
     <div>
         <ul class="nav nav-tabs">
             <li role="presentation" name = "allUser" <?php if ($activeTop=="-1") echo "class='active'";?>><a href="<?php $operation='/admin/user_manager/-1'; echo site_url($operation);?>">所有用户</a></li>
@@ -38,7 +53,7 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>工号</th>
+                            <th>学号</th>
                             <th>用户名</th>                                   
                             <th>性别</th>                                     
                             <th>部门</th>

@@ -34,8 +34,15 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <img id="captcha" src="<?php echo site_url('/login/captcha')?>" alt="加载失败" title="点击刷新验证码">
+                                </span>
+                                <input type="text" class="form-control" name="captcha" placeholder="验证码" maxlength="5">
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10" align="right">
-                                <a class="login-link" href="<?php echo site_url('/login/reset_password')?>">忘记密码？</a>
                                 <button type="submit" class="btn btn-defualt">登录</button>
                             </div>
                         </div>
@@ -44,5 +51,15 @@
                 <div class="col-md-3"></div>
             </div>
         </div>
+
+<script type="text/javascript">
+(function($){
+    $(function() {
+        $("#captcha").click(function(){
+            $(this).attr("src", "<?php echo site_url('/login/captcha');?>" );
+        });
+    });
+})(jQuery);
+    </script>
     </body>
 </html>
