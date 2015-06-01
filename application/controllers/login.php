@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Login extends CI_Controller {
-	public function index(){	
+	public function index(){
 		//$this->load->library('session');
 		// 载入CI的session库
 		//if($this->session->userdata('u_id')){}
@@ -9,64 +9,64 @@ class Login extends CI_Controller {
 		//$this->load->view('echo');
 	}
 	function check(){
+		$userNum = trim($_POST['uNumber']);
+		$password = trim($_POST['uPassword']);
+		$captcha = trim($_POST['captcha']);
 		$this->load->model('userCrud');
-		//加载ucrud模块，该模块用于用户的crud
-		//$sql = array('*','users','UserNum',$_POST['uNumber']);
-		$user = $this->userCrud->read_user_login_info($_POST['uNumber']);
-		//调用u_crud模型的u_select方法查询提交的学号/工号信息
-		if ($user){
-			//如果用户存在
-			//echo $user[0]->Password;
-			if ($user[0]->Password == md5($_POST['uPassword'])){
-				//如果密码一致，创建session
-				$this->load->library('session');
-				//载入CI的session库
-				$data = array('s_id' => $user[0]->UserNum);
-				//把用户Num存入数组
-				$this->session->set_userdata($data);
-				//设置session
-				switch ($user[0]->Type) {
-					case '0':redirect('admin');break;
-					case '1':redirect('teacher');break;
-					case '2':redirect('student');break;
-					default:break;
-				}
-			}else{
-				echo 'pw wrong';				
-			}
-		}else{
-			echo 'name wrong';
+		$user = $this->userCrud->read_user_login_info($userNum);
+		$error_msg="";
+		if(!$user){
+			$error_msg="该用户不存在！";
 		}
-	}
-	function reset_password(){
-		$this->load->view("forgetPassword");
+		if($user->Password != md5($password)){
+			$error_msg="密码错误！";
+		}
+		$this->load->library("captcha/CaptchaBuilder");
+		$this->load->library('session');
+		$this->captchabuilder->setPhrase( $this->session->userdata('captcha') );
+		if(!$this->captchabuilder->testPhrase( $captcha ) ) {
+			$error_msg="验证码错误！";
+		}
+		if($this->session->userdata('captcha_time')+300<time()){
+			$error_msg="验证码已过期！";
+		}
+		if($error_msg){
+			$this->load->view("loginError", array('msg' => $error_msg ));
+		}else{
+			$this->load->library('session');
+			$data = array('s_id' => $user->UserNum);
+			$this->session->set_userdata($data);
+			switch ($user->Type) {
+				case '0':redirect('admin');break;
+				case '1':redirect('teacher');break;
+				case '2':redirect('student');break;
+				default:break;
+			}
+		}
 	}
 
-	function reset_password_action(){
-		//生成token
-		$time = date("Y-m-d h:i:s",strtotime(" + 30 minute"));echo $time;
-		echo "<br>";
-		$time = date("Y-m-d h:i:s");echo $time;
-		//发送邮件给用户email，使用验证码，
-		//将（验证码，用户名，时间戳）对存放到数据库中
-		//显示验证界面，用户输入用户名，验证码，以及新的密码，
+	public function captcha() {
+		$this->load->library("captcha/CaptchaBuilder");
+		$this->captchabuilder->setBackgroundColor(85,85,85);
+		$this->captchabuilder->setTextColor(238,238,238);
+		$this->captchabuilder->setDistortion(false);
+
+		$this->captchabuilder->build(150, 64);
+
+		$content = $this->captchabuilder->getPhrase();
+
+		$this->load->library("session");
+		$this->session->set_userdata( array(
+			'captcha'		=> $content,
+			'captcha_time'	=> time()
+		) );
+
+		header("Cache-Control: no-cache, must-revalidate");
+		header("Content-Type: image/jpeg");
+		$this->captchabuilder->output();
 	}
-	/*
-	function reset_password_action(){
-		$this->load->model('validation');
-		$token = $_POST['token'];
-		$isValidToken = $this->validation->is_valid_token($token);
-		if($isValidToken){
-			$isValidPass = $this->validation->is_valid_password(md5($_POST['password1']),md5($_POST['password2']));
-			if($isValidPass){
-				$newPass = md5(($_POST['password1']));
-				$this->load->model('userCrud');
-				$this->userCrud->update_user_info(array("Password"=>md5($newPass)));
-				$this->load->view('login');
-				$this->load->model('token');
-			}
-		}
-	}*/
+
+
 	function get_CAPTCHA(){
 		//未完成
 		//用户必须输入学号/工号,并且输入对应邮箱才可以找回密码，

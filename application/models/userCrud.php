@@ -5,7 +5,50 @@ class UserCrud extends CI_Model{
 		$this->load->database();
 	}
 	function create_user($data){
-		$this->db->insert("users",$data);
+		//1.check if userNum exists
+		$msg = "";
+		$success=0;
+		$query = $this->db->select("*")->from("users")
+		->where("UserNum",$data['UserNum'])->get()->result();
+		if($query){
+			//userNum exists,cannot create the user!
+			$msg = "此学号/工号已被使用！";
+			$errorNo = 1;
+		}elseif (!filter_var($data['Email'],FILTER_VALIDATE_EMAIL)) {
+		//2.check the email is valid.
+			//echo "check 1";
+			$msg = "您输入的邮箱不存在！";
+			$errorNo = 2;
+		}else{
+			$domain = explode('@', $data['Email']);
+			//print_r($domain);
+			if(!checkdnsrr($domain[1],'MX')){
+				$msg = "您输入的邮箱不可用！";
+				$errorNo = 3;
+			}else{
+				//在OpenStack中创建用户
+				//1.获取当前用户的学号和密码
+				//$this->load->library("session");
+				//$userNum = $this->session->userdata('s_id');
+				//$password = $this->read_user_login_info($userNum)->Password;
+				$this->load->model('openstack');
+				$tokenID = $this->openstack->get_token_info("tokenID");
+				$result_OS = $this->openstack->create_user($tokenID,$data);
+				//print_r($result_OS);
+				
+				//$this->openstack->user_create($data);
+				$result = $this->db->insert("users",$data);
+				if($result){
+					$msg = "创建成功！";
+					$errorNo = 0;
+				}
+				else{
+					$msg="创建失败！请检查输入的用户信息！";
+					$errorNo = 4;
+				}
+			}
+		}
+		return array("message"=>$msg,"success"=>$errorNo);
 	}
 	function read_user_list($type="-1"){//if $type==-1, read all the users
 		$this->db->select("UserNum,UserName,UserID,TenantID,Gender,Email,Section,Type");
@@ -14,23 +57,47 @@ class UserCrud extends CI_Model{
 		return $query->result();
 	}
 	function read_user_info($userNum){
-		$query = $this->db->select("UserNum,UserName,UserID,TenantID,Gender,Email,Section,Type")->where("UserNum",$userNum)->from("users")->get();
+		$query = $this->db->select("UserNum,UserName,UserID,TenantID,Gender,Email,Section,Type")
+		->where("UserNum",$userNum)->from("users")->get();
 		return $query->result();
+	}
+	function read_user_email($userNum){
+		$email = $this->db->select("Email")->from("users")->where("UserNum",$userNum)->get()->result();
+		if(count($email)==1){
+			return $email[0]->Email;
+		}
+		return $email;
 	}
 	function read_user_type($userNum){
-		return $this->db->select("Type")->from("users")->where("userNum",$userNum)->get()->result()[0]->Type;
+		return $this->db->select("Type")->from("users")
+		->where("userNum",$userNum)->get()->result()[0]->Type;
 	}
 	function read_user_login_info($userNum){
-		$query = $this->db->select("Type,UserNum,Password")->where("UserNum",$userNum)->from("users")->get();
-		return $query->result();
+		$query = $this->db->select("Type,UserNum,Password")
+		->where("UserNum",$userNum)->from("users")->get()->result();
+		if (count($query)==0){return array();}
+		else return $query[0];
 	}
 
 	function update_user_info($data,$userNum){
 		$this->db->where("UserNum",$userNum)->update("users",$data);
 	}
 
-	function delete_user($userNum){
-		$this->db->delete("users")->where("UserNum",$userNum);
+	function delete_user($data){
+		$this->load->library("session");
+		$myself = $this->session->userdata('s_id');
+		$msg="删除成功！";
+		$errorNo=0;
+		for ($i=0; $i < count($data); $i++) { 
+			if($myself==$data[$i]){
+				$msg="您无法删除自己的账号！";
+				$errorNo=1;
+			}else{
+				$result = $this->db->where("UserNum",$data[$i])->delete("users");
+				if (!$result){$msg="数据库删除失败!";$errorNo=2;}				
+			}
+		}
+		return array("message"=>$msg,"success"=>$errorNo);
 	}
 	function search_user($columnName,$keyword,$type="-1"){
 		$this->db->select("UserNum,UserName,UserID,TenantID,Gender,Email,Section,Type")->from("users");
@@ -41,7 +108,8 @@ class UserCrud extends CI_Model{
 	function count_user(){
 		$data = array();
 		for ($i=0;$i<3;$i++){
-			$data[] = $this->db->select("count(*) AS COUNT")->from("users")->where("Type",$i)->get()->result()[0]->COUNT;
+			$data[] = $this->db->select("count(*) AS COUNT")->from("users")
+			->where("Type",$i)->get()->result()[0]->COUNT;
 		}
 		return $data;
 	}

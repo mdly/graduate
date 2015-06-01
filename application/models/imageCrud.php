@@ -86,8 +86,8 @@ class ImageCrud extends CI_Model{
 	}
 	function syc_openstack(){
 		$this->load->model("openstack");
-		$token = $this->openstack->authenticate_v2("admin","xuexihao");
-		//function get_resources($tokenID,$tenantID,$resources)
+		$token = $this->openstack->authenticate_v2();
+		//print_r($token);
 		$images = $this->openstack->get_resources($token['access']['token']['id'],$token['access']['token']['tenant']['id'],'image')['images'];
 		//$images = $this->openstack->get_resources($token['access']['token']['id'],$token['access']['token']['tenant']['id'],'image');
 		//print_r($images);

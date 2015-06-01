@@ -17,31 +17,24 @@ class Admin extends CI_Controller {
 	public function index(){
 		//admin用户登录进来以后的第一个页面
 		$this->load->model('openstack');
-		$userName = 'admin';
-		$password = 'xuexihao';
-		$token = $this->openstack->authenticate_v2($userName,$password);
-		//print_r($token)
-		//print_r($token);
-		//$tokenExpires = $token['access']['token']['expires'];
-		$tokenID = $token['access']['token']['id'];
-		$tenantID = $token['access']['token']['tenant']['id'];
-		//$imageOS = $this->openstack->get_resources($tokenID,$tenantID,'image')['images'];
-		//$imageOS = $this->openstack->get_resources($tokenID)['images'];
+		$token = $this->openstack->authenticate_v2();
+		//$tokenID = $token['access']['token']['id'];
+		//$tenantID = $token['access']['token']['tenant']['id'];
 		$this->load->model('imageCrud');
 		$this->imageCrud->syc_openstack();
 		$image=$this->imageCrud->count_image();
-		//$imageOSCount = count($imageOS);
-		//echo $imageOSCount;
-		//echo "the image_OS = ";
-		//print_r($image_OS);
 		$this->load->model('userCrud');
 		$user = $this->userCrud->count_user();
 		$this->load->model('courseCrud');
 		$course = $this->courseCrud->count_course();
 		$this->load->model('imageCrud');
 		$image = $this->imageCrud->count_image();
-		$data = array('NAdmin' => $user[0],'NTeacher' => $user[1],'NStudent' => $user[2],
-			'NCourseOff' => $course[0],'NCourseOn' => $course[1],'NCourseDone' => $course[2],
+		$data = array('NAdmin' => $user[0],
+			'NTeacher' => $user[1],
+			'NStudent' => $user[2],
+			'NCourseOff' => $course[0],
+			'NCourseOn' => $course[1],
+			'NCourseDone' => $course[2],
 			//'NImage' => $imageOSCount);
 			'NImage' => $image);
 		$this->load->view('/admin/top');
@@ -58,7 +51,12 @@ class Admin extends CI_Controller {
 		$user = $this->userCrud->read_user_list($type);		
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"1"));
-		$this->load->view('/admin/user/userManagerR',array("data"=>$user,"activeTop"=>$type,"selectColumn"=>"0",'keyword'=>""));
+		$this->load->view('/admin/user/userManagerR',
+			array("data"=>$user,
+				"activeTop"=>$type,
+				"selectColumn"=>"0",
+				'keyword'=>"",
+				'result'=>array()));
 		$this->load->view('/admin/botton');
 
 		//$this->load->view('/admin/user/userManager',array("data"=>$user,"activeTop"=>$type,"selectColumn"=>"0",'keyword'=>""));
@@ -71,7 +69,12 @@ class Admin extends CI_Controller {
 		$user = $this->userCrud->search_user($column,$keyword,$type);
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"1"));
-		$this->load->view('/admin/user/userManagerR',array("data"=>$user,"activeTop"=>$type,"selectColumn"=>$column,'keyword'=>$keyword));
+		$this->load->view('/admin/user/userManagerR',
+			array("data"=>$user,
+				"activeTop"=>$type,
+				"selectColumn"=>$column,
+				'keyword'=>$keyword,
+				'result'=>array()));
 		$this->load->view('/admin/botton');
 
 		//$this->load->view('/admin/user/userManager',array('data'=>$user,'activeTop'=>$type,'selectColumn'=>$column,'keyword'=>$keyword));	
@@ -85,12 +88,23 @@ class Admin extends CI_Controller {
 	}
 	function create_user_action(){
 		$this->load->model('userCrud');
-		$newUser = array('UserNum'=>$_POST['userNum'],'UserName'=>$_POST['userName'],'Password'=>md5($_POST['password']),'Gender'=>$_POST['Gender'],'Email'=>$_POST['Email'],'Section'=>$_POST['Section'],'Type'=>$_POST['Type']);
-		$this->userCrud->create_user($newUser);
+		$newUser = array('UserNum'=>$_POST['userNum'],
+			'UserName'=>$_POST['userName'],
+			'Password'=>md5($_POST['password']),
+			'Gender'=>$_POST['Gender'],
+			'Email'=>$_POST['Email'],
+			'Section'=>$_POST['Section'],
+			'Type'=>$_POST['Type']);
+		$result=$this->userCrud->create_user($newUser);
 		$user = $this->userCrud->read_user_list();
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"1"));
-		$this->load->view('/admin/user/userManagerR',array('data'=>$user,'activeTop'=>"-1",'selectColumn'=>"0",'keyword'=>""));
+		$this->load->view('/admin/user/userManagerR',
+			array('data'=>$user,
+				'activeTop'=>"-1",
+				'selectColumn'=>"0",
+				'keyword'=>"",
+				'result'=>$result));
 		$this->load->view('/admin/botton');
 		//$this->load->view('/admin/user/userManager',array('data'=>$user,'activeTop'=>"-1",'selectColumn'=>"0",'keyword'=>""));
 	}
@@ -100,14 +114,20 @@ class Admin extends CI_Controller {
 		$this->load->model("userCrud");
 		if(!empty($_POST["deleteUser"])){
 			$users = $_POST["deleteUser"];
-			for($i=0; $i< count($users); $i++){
-				$this->userCrud->delete_user($users[$i]);
-			}
+			$result = $this->userCrud->delete_user($users);
 		}
-		$user = $this->userCrud->read_user_all();
+		//$user = $this->userCrud->read_user_all()
+		$type = "-1";
+		$user = $this->userCrud->read_user_list($type);		
+
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"1"));
-		$this->load->view('/admin/user/userManagerR',array('data'=>$user,'activeTop'=>"0",'selectColumn'=>"0",'keyword'=>"") );
+		$this->load->view('/admin/user/userManagerR',
+			array('data'=>$user,
+				'activeTop'=>"0",
+				'selectColumn'=>"0",
+				'keyword'=>"",
+				'result'=>$result));
 		$this->load->view('/admin/botton');
 		//$this->load->view('/admin/user/userManager',array('data'=>$user,'activeTop'=>"0",'selectColumn'=>"0",'keyword'=>"") );
 		//show_user_list()
@@ -123,12 +143,19 @@ class Admin extends CI_Controller {
 		//获取用户post过来的用户名
 		//这个目前还没有做
 		$this->load->model('userCrud');
-		$user = array('UserNum'=>$_POST['userNum'],'UserName'=>$_POST['userName'],'Password'=>md5($_POST['password']),'Gender'=>$_POST['Gender'],'Email'=>$_POST['Email'],'Section'=>$_POST['Section'],'Type'=>$_POST['Type']);
+		$user = array('UserNum'=>$_POST['userNum'],
+			'UserName'=>$_POST['userName'],
+			'Password'=>md5($_POST['password']),
+			'Gender'=>$_POST['Gender'],
+			'Email'=>$_POST['Email'],
+			'Section'=>$_POST['Section'],
+			'Type'=>$_POST['Type']);
 		$this->userCrud->insert_user($user);
 		$admin = $this->userCrud->update_user_info($user,$userNum);
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"1"));
-		$this->load->view('/admin/user/userManagerR',array('data'=>$admin));
+		$this->load->view('/admin/user/userManagerR',
+			array('data'=>$admin));
 		$this->load->view('/admin/botton');
 		//$this->load->view('/admin/user/userManagerAdmin',array('data'=>$admin));
 	}
@@ -142,7 +169,12 @@ class Admin extends CI_Controller {
 		$course = $this->courseCrud->read_course_list($type,"1");
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"2"));
-		$this->load->view("/admin/course/courseManagerR",array('data'=>$course,'courseType'=>$courseType,'activeTop'=>$type,'selectColumn'=>"0",'keyword'=>""));
+		$this->load->view("/admin/course/courseManagerR",
+			array('data'=>$course,
+				'courseType'=>$courseType,
+				'activeTop'=>$type,
+				'selectColumn'=>"0",
+				'keyword'=>""));
 		$this->load->view('/admin/botton');
 		//$this->load->view("/admin/course/courseManager",array('data'=>$course,'courseType'=>$courseType,'activeTop'=>$type,'selectColumn'=>"0",'keyword'=>""));
 	}
@@ -159,7 +191,12 @@ class Admin extends CI_Controller {
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"2"));
 		//$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$attackerImage,'targetImage'=>$targetImage));
-		$this->load->view("/admin/course/courseDetailR",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'attackerImage'=>$images['attackerImage'],'targetImage'=>$images['targetImage']));
+		$this->load->view("/admin/course/courseDetailR",
+			array('data'=>$courseInfo,
+				'teachers'=>$teachers,
+				'types'=>$types,
+				'attackerImage'=>$images['attackerImage'],
+				'targetImage'=>$images['targetImage']));
 		$this->load->view('/admin/botton');
 		//$this->load->view("/admin/course/courseDetail",array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,'images'=>$images));
 	}
@@ -169,7 +206,10 @@ class Admin extends CI_Controller {
 		$images = $this->imageCrud->read_image_list();
 		$this->load->view("/admin/top");
 		$this->load->view("/admin/left",array('left'=>"2"));
-		$this->load->view("/admin/course/courseImageR",array('data'=>$images,'obj'=>$isTarget,'courseID'=>$courseID));//'obj'=0 ==>attacker,'obj'=1 ==>target
+		$this->load->view("/admin/course/courseImageR",
+			array('data'=>$images,
+				'obj'=>$isTarget,
+				'courseID'=>$courseID));//'obj'=0 ==>attacker,'obj'=1 ==>target
 		$this->load->view("/admin/botton");
 	}
 	function course_add_image_action($isTarget,$courseID){
@@ -192,8 +232,11 @@ class Admin extends CI_Controller {
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"2"));
 		$this->load->view("/admin/course/courseDetailR",
-			array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,
-				'attackerImage'=>$images['attackerImage'],'targetImage'=>$images['targetImage']));
+			array('data'=>$courseInfo,
+				'teachers'=>$teachers,
+				'types'=>$types,
+				'attackerImage'=>$images['attackerImage'],
+				'targetImage'=>$images['targetImage']));
 		$this->load->view('/admin/botton');
 
 	}
@@ -210,8 +253,11 @@ class Admin extends CI_Controller {
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"2"));
 		$this->load->view("/admin/course/courseDetailR",
-			array('data'=>$courseInfo,'teachers'=>$teachers,'types'=>$types,
-				'attackerImage'=>$images['attackerImage'],'targetImage'=>$images['targetImage']));
+			array('data'=>$courseInfo,
+				'teachers'=>$teachers,
+				'types'=>$types,
+				'attackerImage'=>$images['attackerImage'],
+				'targetImage'=>$images['targetImage']));
 		$this->load->view('/admin/botton');
 	}
 
