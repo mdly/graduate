@@ -7,7 +7,7 @@ class UserCrud extends CI_Model{
 	function create_user($data){
 		//1.check if userNum exists
 		$msg = "";
-		$success=0;
+		$errorNo=0;
 		$query = $this->db->select("*")->from("users")
 		->where("UserNum",$data['UserNum'])->get()->result();
 		if($query){
@@ -27,25 +27,26 @@ class UserCrud extends CI_Model{
 				$errorNo = 3;
 			}else{
 				//在OpenStack中创建用户
-				//1.获取当前用户的学号和密码
-				//$this->load->library("session");
-				//$userNum = $this->session->userdata('s_id');
-				//$password = $this->read_user_login_info($userNum)->Password;
 				$this->load->model('openstack');
-				$tokenID = $this->openstack->get_token_info("tokenID");
-				$result_OS = $this->openstack->create_user($tokenID,$data);
+				$tokenID = $this->openstack->get_admin_token()["tokenID"];
+				$user_OS = $this->openstack->create_user($tokenID,$data);
 				//print_r($result_OS);
-				
 				//$this->openstack->user_create($data);
-				$result = $this->db->insert("users",$data);
-				if($result){
-					$msg = "创建成功！";
-					$errorNo = 0;
+				if($user_OS){
+					$result1 = $this->db->insert("users",$data);
+					$result2 = $this->db->where("UserNum",$data["UserNum"])->update("users",$user_OS);
+					if($result1&&$result2){
+						$msg = "创建成功！";
+						$errorNo = 0;
+					}else{
+						$msg="创建失败！请检查输入的用户信息！";
+						$errorNo = 4;
+					}
+				}else{
+					$msg="云用户创建失败！";
+					$errorNo=5;
 				}
-				else{
-					$msg="创建失败！请检查输入的用户信息！";
-					$errorNo = 4;
-				}
+
 			}
 		}
 		return array("message"=>$msg,"success"=>$errorNo);
@@ -84,6 +85,11 @@ class UserCrud extends CI_Model{
 	}
 
 	function delete_user($data){
+		//1.判断要删除的用户是否管理员或教师用户
+		//若是，则只需删除本地数据库
+		//若否，则还要删除openstack中用户，以及用户创建的虚拟机和网络
+		//网络部分先等等
+		$this->load->model("openstack");
 		$this->load->library("session");
 		$myself = $this->session->userdata('s_id');
 		$msg="删除成功！";
@@ -93,8 +99,16 @@ class UserCrud extends CI_Model{
 				$msg="您无法删除自己的账号！";
 				$errorNo=1;
 			}else{
+				if($this->read_user_type($data[$i])==2){
+					//student
+					$user_OS = $this->db->select("TenantID,UserID")->from("users")
+					->where("UserNum",$data[$i])->get()->result()[0];
+					$this->openstack->delete_tenant($user_OS->TenantID);
+					$this->openstack->delete_user($user_OS->UserID);
+				}
+				//$this->openstack->delete_user($data[$i]);
 				$result = $this->db->where("UserNum",$data[$i])->delete("users");
-				if (!$result){$msg="数据库删除失败!";$errorNo=2;}				
+				if (!$result){$msg="数据库删除失败!";$errorNo=2;}
 			}
 		}
 		return array("message"=>$msg,"success"=>$errorNo);

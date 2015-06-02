@@ -142,6 +142,7 @@ class Admin extends CI_Controller {
 	function update_user_action($userNum){
 		//获取用户post过来的用户名
 		//这个目前还没有做
+		//这边不能修改用户的角色类型，否则在openstack中的用户结构也要发生变化，会非常复杂
 		$this->load->model('userCrud');
 		$user = array('UserNum'=>$_POST['userNum'],
 			'UserName'=>$_POST['userName'],
