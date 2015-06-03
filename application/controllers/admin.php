@@ -88,13 +88,14 @@ class Admin extends CI_Controller {
 	}
 	function create_user_action(){
 		$this->load->model('userCrud');
-		$newUser = array('UserNum'=>$_POST['userNum'],
-			'UserName'=>$_POST['userName'],
-			'Password'=>md5($_POST['password']),
-			'Gender'=>$_POST['Gender'],
-			'Email'=>$_POST['Email'],
-			'Section'=>$_POST['Section'],
-			'Type'=>$_POST['Type']);
+		$newUser = array(
+			'UserNum'=>trim($_POST['userNum']),
+			'UserName'=>trim($_POST['userName']),
+			'Password'=>md5(trim($_POST['password'])),
+			'Gender'=>trim($_POST['Gender']),
+			'Email'=>trim($_POST['Email']),
+			'Section'=>trim($_POST['Section']),
+			'Type'=>trim($_POST['Type']));
 		$result=$this->userCrud->create_user($newUser);
 		$user = $this->userCrud->read_user_list();
 		$this->load->view('/admin/top');
@@ -384,13 +385,11 @@ class Admin extends CI_Controller {
 		$newCourse = array('CourseName'=>$_POST['courseName'],'TeacherID'=>$_POST['teacherID'],
 			'TypeID'=>$_POST['typeID'],'Duration'=>$_POST['duration'],'File'=>$file_info['upload_data']['full_path'],
 			'SubmitLimit'=>$_POST['submitLimit'],'CourseDesc'=>$_POST['courseDesc'],
-			'StartTime'=>$_POST['startTime'],'StopTime'=>$_POST['stopTime'],'Location'=>$_POST['location'],
-			'ImageIDAtk'=>$_POST['imageIDAtk'],'ImageIDTgt'=>$_POST['imageIDTgt']);
+			'StartTime'=>$_POST['startTime'],'StopTime'=>$_POST['stopTime'],'Location'=>$_POST['location']);
 		//$newType = array('TypeName'=>$_POST['typeName'],'TypeDesc'=>$_POST['Description']);
 		$this->courseCrud->create_course($newCourse);	
 		$course = $this->courseCrud->read_course_list("-1","1");
 		$courseType = $this->courseCrud->read_type_list();
-
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"2"));
 		$this->load->view("/admin/course/courseManagerR",array('data'=>$course,'courseType'=>$courseType,'activeTop'=>-1,'selectColumn'=>"0",'keyword'=>""));

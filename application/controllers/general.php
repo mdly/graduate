@@ -57,10 +57,14 @@ class General extends CI_Controller{
 	function check_pswd($role){
 		$this->load->model('validation');
 		$isValid = $this->validation->is_valid_password(md5($_POST['password1']),md5($_POST['password2']));
+		$failed = 1;
 		if ($isValid){
 			$this->load->model('userCrud');
 			$userNum = $this->session->userdata('s_id');
 			$this->userCrud->update_user_info(array('Password'=>md5($_POST['password1'])),$userNum);
+			// $this->load->model('openstack');
+			// $result = $this->openstack->reset_password($userNum,$password);
+			// if (!$result['failed']) $failed = 0;
 			$this->session->unset_userdata('s_id');
 			$this->load->view('login');
 		}else{
@@ -80,8 +84,34 @@ class General extends CI_Controller{
 		$fileName = $course->CourseName;
 		$this->load->helper('download');
 		$data = file_get_contents($filePath);
-		$name = $fileName."指导书.doc";
+		$format = explode(".", $filePath);
+		$format = $format[count($format)-1];
+		echo "alert(".$format.")";
+		$name = $fileName."指导书.".$format;
 		force_download($name,$data);
+	}
+	function get_VM_detail($vmID){
+		$this->load->model('openstack');
+		$token = $this->openstack->get_tokenID();
+		// $tokenID = $token['access']['token']['id'];
+		// $urlToken = substr($tokenID, 0,8)."-".substr($tokenID, 8,4)."-".substr($tokenID, 12,4)."-".substr($tokenID, 14,4)."-".substr($tokenID, 18);
+		// $this->load->view()
+		$this->load->model("userCrud");
+		$VMInfo = $this->openstack->get_server_detail($vmID);
+		$this->load->library("session");
+		$userID = $this->session->userdata("s_id");
+		$userType = $this->userCrud->read_user_login_info($userID)->Type;
+		switch ($userType) {
+			case '0':$role="admin";break;
+			case '1':$role="teacher";break;
+			case '2':$role="student";break;
+			default:$role="admin";break;
+		}
+		$this->load->view('/'.$role.'/top');
+		$this->load->view('/'.$role.'/left',array('left'=>"1"));
+		$this->load->view('/VM',array('data'=>$VMInfo['basicInfo'],'VMURL'=>$VMInfo['url']));
+		$this->load->view('/'.$role.'/botton');
+
 	}
 }
 ?>

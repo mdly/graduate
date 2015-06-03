@@ -90,32 +90,8 @@
 					</div>
 					<label class="col-sm-4"></label>
 				</div>
-				<div class="form-group">
-					<label for="imageIDAtk" class="col-sm-4 control-label">攻击机镜像</label>
-					<div class="col-sm-4">
-						<select class="form-control" id="imageIDAtk" name="imageIDAtk">
-							<?php
-							for ($i=0;$i<count($images);$i++)
-								echo "<option value=".$images[$i]->ImageID.">".$images[$i]->ImageName."</option>";
-							?>
-						</select>
-					</div>
-					<label class="col-sm-3"></label>
-				</div>
-				<div class="form-group">
-					<label for="imageIDTgt" class="col-sm-4 control-label">靶机镜像</label>
-					<div class="col-sm-4">
-						<select class="form-control" id="imageIDTgt" name="imageIDTgt">
-							<?php
-							for ($i=0;$i<count($images);$i++)
-								echo "<option value=".$images[$i]->ImageID.">".$images[$i]->ImageName."</option>";
-							?>
-						</select>
-					</div>
-					<label class="col-sm-4"></label>
-				</div>
-
 				<!--created字段由系统设置-->
+				<!--镜像的绑定这边还要考虑一下，或者是动态实现？-->
 				<div class="form-group">
 					<div class="col-sm-offset-2 col-sm-6" align="right">
 						<a href="<?php echo site_url('/admin/show_course_list')?>">取消</a>

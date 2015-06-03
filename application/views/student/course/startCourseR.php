@@ -18,10 +18,11 @@
 						for ($i=0; $i < count($attackerVM); $i++) {
 							echo "
 							<div class='col-sm-4'>
-								<input type='text' class='form-control' value=".$attackerVM[$i]->VMName." disabled>
+								<a class='btn btn-default btn-block' href=".site_url("/general/get_VM_detail/".$attackerVM[$i]->VMID)." role='button'>".$attackerVM[$i]->VMName."</a>
+
 							</div>
 							<div class='col-sm-4'>
-								<a class='btn btn-default' href=".site_url('/student/delete_attacker_VM/'.$courseID."/".$attackerVM[$i]->VMID)."><span class='glyphicon glyphicon-minus' aria-hidden='true'></span></a>
+								<a class='btn btn-default' href=".site_url('/student/delete_VM_action/'.$courseID."/".$attackerVM[$i]->VMID)."><span class='glyphicon glyphicon-minus' aria-hidden='true'></span></a>
 							</div>
 							<label class='col-sm-4'></label>
 							";
@@ -43,6 +44,7 @@
 					<label for="imageIDTgt" class="col-sm-4 control-label">靶机实例</label>
 					<?php 
 					if(!count($targetVM)){
+						// echo "<a class='btn btn-default' href='#' role='button'>未添加实例</a>"
 						echo "
 						<div class='col-sm-4'>
 							<input type='text' class='form-control' value='未添加实例' disabled>
@@ -52,10 +54,10 @@
 						for ($i=0; $i < count($targetVM); $i++) {
 							echo "
 							<div class='col-sm-4'>
-								<input type='text' class='form-control' value=".$targetVM[$i]->VMName." disabled>
+								<a class='btn btn-default btn-block' href=".site_url("/general/get_vm_detail/".$targetVM[$i]->VMID)." role='button'>".$targetVM[$i]->VMName."</a>
 							</div>
 							<div class='col-sm-4'>
-								<a class='btn btn-default' href=".site_url('/student/delete_target_VM/'.$courseID."/".$targetVM[$i]->VMID)."><span class='glyphicon glyphicon-minus' aria-hidden='true'></span></a>
+								<a class='btn btn-default' href=".site_url('/student/delete_VM_action/'.$courseID."/".$targetVM[$i]->VMID)."><span class='glyphicon glyphicon-minus' aria-hidden='true'></span></a>
 							</div>
 							<label class='col-sm-4'></label>
 							";

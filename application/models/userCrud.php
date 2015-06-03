@@ -49,7 +49,7 @@ class UserCrud extends CI_Model{
 
 			}
 		}
-		return array("message"=>$msg,"success"=>$errorNo);
+		return array("message"=>$msg,"failed"=>$errorNo);
 	}
 	function read_user_list($type="-1"){//if $type==-1, read all the users
 		$this->db->select("UserNum,UserName,UserID,TenantID,Gender,Email,Section,Type");
@@ -99,19 +99,30 @@ class UserCrud extends CI_Model{
 				$msg="您无法删除自己的账号！";
 				$errorNo=1;
 			}else{
-				if($this->read_user_type($data[$i])==2){
+				$type = $this->read_user_type($data[$i]);
+				if($type==2){
 					//student
+					//delete tenant in openstack
 					$user_OS = $this->db->select("TenantID,UserID")->from("users")
 					->where("UserNum",$data[$i])->get()->result()[0];
 					$this->openstack->delete_tenant($user_OS->TenantID);
+					//delete user in openstack
 					$this->openstack->delete_user($user_OS->UserID);
+					//delete items in selectcourse table
+					$this->db->where("StudentID",$data[$i])->delete("selectcourse");
+					//delete items in coursevm table
+					$this->db->where("UserNum",$data[$i])->delete("coursevm");
+				}elseif ($type==1) {
+					//teacher
+					//delete items in courses table
+					$this->db->where("TeacherID",$data[$i])->delete("courses");
 				}
-				//$this->openstack->delete_user($data[$i]);
-				$result = $this->db->where("UserNum",$data[$i])->delete("users");
-				if (!$result){$msg="数据库删除失败!";$errorNo=2;}
+				//delete items in users table
+				$this->db->where("UserNum",$data[$i])->delete("users");
+				//if (!$result){$msg="数据库删除失败!";$errorNo=2;}
 			}
 		}
-		return array("message"=>$msg,"success"=>$errorNo);
+		return array("message"=>$msg,"failed"=>$errorNo);
 	}
 	function search_user($columnName,$keyword,$type="-1"){
 		$this->db->select("UserNum,UserName,UserID,TenantID,Gender,Email,Section,Type")->from("users");

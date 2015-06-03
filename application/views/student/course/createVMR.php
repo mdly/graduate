@@ -4,7 +4,7 @@
 			<h3 class="panel-title">创建新实例</h3>
 		</div>
 		<div class="panel-body">
-			<form class="form-horizontal" enctype="multipart/form-data" method="post" action="<?php echo site_url('/student/create_VM_action/'.$courseID)?>">
+			<form class="form-horizontal" method="post" action="<?php echo site_url('/student/create_VM_action/'.$isTarget.'/'.$courseID)?>">
 				<div class="form-group">
 					<label for="vmName" class="col-sm-4 control-label">名称</label>
 					<div class="col-sm-4">
@@ -68,7 +68,7 @@
 				<!--created字段由系统设置-->
 				<div class="form-group">
 					<div class="col-sm-offset-2 col-sm-6" align="right">
-						<a href="<?php echo site_url('/student/course_manager')?>">取消</a>
+						<a href="<?php echo site_url('/student/start_course/'.$courseID)?>">取消</a>
 						<button type="submit" class="btn btn-defualt">启动实例</button>
 					</div>
 				</div>

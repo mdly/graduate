@@ -57,21 +57,22 @@ class CourseCrud extends CI_Model{
 	}
 
 	//file function
-	function upload_file(){
-		$config['upload_path']='uploads';
+
+	function upload_file($file){
+		$config['upload_path']='./uploads';
 		$config['allowed_types']='pdf|doc|docx';
 		$config['max_size']='10240000';//10mb
 		$this->load->library('upload',$config);
 		$this->upload->do_upload('file');
-		if($this->upload->do_upload('file')){
+		if($this->upload->do_upload($file)){
 			$data = array('upload_data'=>$this->upload->data());
 			var_dump($data);
 		}else{
 			$error=array('error'=>$this->upload->display_errors());
 			var_dump($error);
 		}
-		return $this->upload->data();
-
+		//return $this->upload->data();
+		return $data['upload_data']['full_path'];
 	}
 	function count_course($userNum="-1"){
 		$data = array();
@@ -126,11 +127,71 @@ class CourseCrud extends CI_Model{
 	function finish_course($courseID){
 		$this->db->where("CourseID",$courseID)->update("courses",array("State"=>2));
 	}
+	function submit_course($userNum,$courseID){
+		$this->db->where("CourseID",$courseID)->where('StudentID',$userNum)->update('selectcourse',array("Finished",'1'));
+	}
+	function select_course($userNum,$courseID){
+		$data = array("CourseID"=>$courseID,"StudentID"=>$userNum,"Finished"=>"0");
+		$this->db->insert("selectcourse",$data);
+	}
+	function read_selected_course($userNum){
+		$data=$this->db->select("*")->from('selectcourse')->where("StudentID",$userNum)->where("Finished","0")->get()->result();
+		// $data = array();
+		return $data;
+	}
+	function read_unselected_course($userNum){
+		// $selectCourse = $this->db->select("CourseID")->where("StudentID",$userNum)->from("selectcourse")->get()->result();
+		$selectCourse = $this->read_selected_course($userNum);
+		// print_r($selectCourse);
+		$this->db->select("*")->from("courses");
+		for ($i=0; $i < count($selectCourse); $i++) { 
+			$this->db->where_not_in("CourseID",array($selectCourse[$i]->CourseID));
+		}
+		$unselectedCourse = $this->db->get()->result();
+		return $unselectedCourse;
+	}
+	function read_finished_course($userNum){
+		$data=$this->db->select("*")->from('selectcourse')->where("StudentID",$userNum)->where("Finished","1")->get()->result();
+				$data = array();
+
+		return $data;
+	}
 	function read_vm($courseID,$userNum){
 		$targetVM = $this->db->select("*")->where("CourseID",$courseID)->where("UserNum",$userNum)->where("isTarget",1)->from("coursevm")->get()->result();
 		$attackerVM = $this->db->select("*")->where("CourseID",$courseID)->where("UserNum",$userNum)->where("isTarget",0)->from("coursevm")->get()->result();
 		$data = array('targetVM' => $targetVM, 'attackerVM'=>$attackerVM);
 		return $data;
+	}
+	function create_vm($courseID,$isTarget){
+		$this->load->model('openstack');
+		$this->load->library('session');
+		$tenantName = $this->session->userdata('s_id');
+		$token = $this->openstack->authenticate_v2();
+		$tenantID = $token['access']['token']['tenant']['id'];
+		$tokenID = $token['access']['token']['id'];
+		$name = $_POST['vmName'];
+		$imageRef = $_POST['image'];
+		$network = $_POST['network'];
+		$flavorRef = $_POST['flavor'];
+		$serverInfo = $this->openstack->create_server($tokenID,$tenantName,$tenantID,$name,$imageRef,$flavorRef,$network);
+		$data = array(
+			"UserNum"=>$tenantName,
+			"CourseID"=>$courseID,
+			"VMID"=>$serverInfo['id'],
+			"VMName"=>$name,
+			"VMURL"=>$serverInfo['links']['0']['href'],
+			"isTarget"=>$isTarget);
+		$this->db->insert("coursevm",$data);
+	}
+	function delete_vm($courseID,$vmID){
+		$this->load->model('openstack');
+		$token = $this->openstack->authenticate_v2();
+		$tokenID = $token['access']['token']['id'];
+		$tenantID = $token['access']['token']['tenant']['id'];
+		$this->load->library('session');
+		$tenantName = $this->session->userdata("s_id");
+		$this->openstack->delete_server($tokenID,$tenantID,$tenantName,$vmID);
+		$this->db->where("CourseID",$courseID)->where("VMID",$vmID)->delete("coursevm");
 	}
 }
 ?>

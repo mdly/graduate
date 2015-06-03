@@ -1,7 +1,7 @@
 <div class="col-xs-10">
     <?php 
     if($result){
-        if (!$result['success']){
+        if (!$result['failed']){
             $msgType="alert-success";
         }else{
             $msgType="alert-danger";

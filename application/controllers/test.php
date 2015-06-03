@@ -42,9 +42,34 @@ class Test extends CI_Controller{
 		echo "roleID_member=";
 		print_r($roleID_member);*/
 		$this->load->model("openstack");
-		$result= $this->openstack->delete_user("fa65238a341a4945bca2a5381c6b10b7");
+		//$result= $this->openstack->delete_user("fa65238a341a4945bca2a5381c6b10b7");
+		$this->load->database();
+		$this->db->where("StudentID","5110159006")->delete("selectcourse");
+		//print_r($result);
+		$token = $this->openstack->get_admin_token();
+		$tokenID = $token['tokenID'];
+		//$this->openstack-> run_VM($tokenID,"3cedbe928a884c4ebeca586f24f34404","47bd8248-29aa-4280-ab9f-f43919ffa42c","1","123","b2b20621-530f-42e6-acf3-2b979e8c9d74");
+		// $data ='{"server": {"name": "test1", "imageRef": "47bd8248-29aa-4280-ab9f-f43919ffa42c", "flavorRef": "1", "max_count": 1, "min_count": 1, "networks": [{"uuid": "caa44e0b-97c8-4aab-aa50-af69ba2f6007"}]}}';
+		// print_r($data);
+		// $json = json_decode($data);
+		// print_r($json);
+		// $url="http://192.168.28.1:6080/vnc_auto.html?token=39c91e8d-74a0-45b6-99b4-3071eed1be7f&title=demoVM(ed635b09-fb0b-459e-b81e-22b439e7dd16)";
+		// echo "<a href=".$url.">".$url."</a>";
+		//$this->load->model('courseCrud');
+		//$result = $this->courseCrud->read_vm(30,5110159004);
+		// print_r($tokenID);
+		echo $tokenID;
+		// $token = substr($tokenID, 0,8);
+		// echo "<br>";
+		// $token = substr($tokenID, 0,8)."-".substr($tokenID, 8,4)."-".substr($tokenID, 12,4)."-".substr($tokenID, 14,4)."-".substr($tokenID, 18);
+		// echo "$token";
+		$tenantID= $token['tenantID'];
+		$vmID = "7361350a-49e6-49a2-afdf-ec282d00effe";
+		$tenantName = "5110159004";
+		$this->openstack->create_keypair($tokenID,$tenantID,$tenantName);
 
-		print_r($result);
+		// $this->openstack->delete_server($tokenID,$tenantID,"5110159004",$vmID);
+
 
 	}
 	
