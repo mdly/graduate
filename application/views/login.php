@@ -56,7 +56,7 @@
 (function($){
     $(function() {
         $("#captcha").click(function(){
-            $(this).attr("src", "http://localhost/ADplatform/index.php/login/captcha" );
+            $(this).attr("src", "<?php echo site_url('/login/captcha?_=');?>" + Math.random());
         });
     });
 })(jQuery);

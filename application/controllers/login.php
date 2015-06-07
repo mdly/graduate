@@ -51,7 +51,7 @@ class Login extends CI_Controller {
 		$this->captchabuilder->setTextColor(238,238,238);
 		$this->captchabuilder->setDistortion(false);
 
-		$this->captchabuilder->build(150, 64);
+		$this->captchabuilder->build(85, 25);
 
 		$content = $this->captchabuilder->getPhrase();
 

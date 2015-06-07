@@ -261,8 +261,22 @@ class Openstack extends CI_Model{
 	function slash_ID($id){
 		return substr($id, 0,8)."-".substr($id, 8,4)."-".substr($id, 12,4)."-".substr($id, 14,4)."-".substr($id, 18);
 	}
-	function get_server_detail($vmID){
+	function get_server_url($tokenID,$tenantID,$vmID){
+		$url = ":8774/v2/".$tenantID."/servers/".$vmID."/action";
+		$header = array();
+		$header[] = 'User-Agent: python-novaclient';
+		$header[] = 'Content-type: application/json';
+		$header[] = 'Accept: application/json';
+		$header[] = 'X-Auth-Token: '.$tokenID;
+		$method = 'POST';
+		$data = array("os-getVNCConsole"=>array("type"=>'novnc'));
+		$result = $this->curl_opt($url,$method,$data,$header);
+		// {"console": {"url": "http://192.168.28.1:6080/vnc_auto.html?token=9b8088ca-7465-486c-8a5c-207bcc8036dc", "type": "novnc"}}
+		$VMURL = $result['console']['url'];
+		return $VMURL;
+	}
 
+	function get_server_detail($vmID){
 		$tenantID=$this->authenticate_v2()['access']['token']['tenant']['id'];
 		$tokenID = $this->authenticate_v2()['access']['token']['id'];
 		// $url = ":8774/v2.1/servers/".$vmID;
@@ -270,18 +284,21 @@ class Openstack extends CI_Model{
 		// $url = ":8774/".$tenantID."servers/".$vmID;
 		// $url = ":8774/v2.1/servers/7361350a-49e6-49a2-afdf-ec282d00effe";
 		// $url = ":8774/v2.1/servers/7361350a-49e6-49a2-afdf-ec282d00effe/ips";
+		// print_r($VMURL);
 		$url = ":8774/v2/".$tenantID."/servers/".$vmID;
 		$method="GET";
 		$header = array('X-Auth-Token: '.$tokenID);
 		$vmInfo = $this->curl_opt($url,$method,$data="",$header)['server'];
 		// echo "this is os";
-		// print_r($vmInfo);
-		$site="192.168.28.1";
-		$slash_token = $this->slash_ID($tokenID);
-		$slash_serverID = $this->slash_ID($vmID);
-		$url = "http://".$site.":6080/vnc_auto.html?token=".$slash_token."&title=".$vmInfo['name']."(".$vmID.")";
+		$VMURL = $this->get_server_url($tokenID,$tenantID,$vmID);
+		// $site="192.168.28.1";
+		// $slash_token = $this->slash_ID($tokenID);
+		// $slash_serverID = $this->slash_ID($vmID);
+
+		// $url = "http://".$site.":6080/vnc_auto.html?token=".$slash_token."&title=".$vmInfo['name']."(".$vmID.")";
 		// $url = $this->get_vm();
-		return array('basicInfo'=>$vmInfo,'url'=>$url);
+		// return array('basicInfo'=>$vmInfo,'url'=>$url);
+		return array('basicInfo'=>$vmInfo,'url'=>$VMURL);
 	}
 	function create_network($tokenID,$name,$subnetName,$subnetCIDR){
 		//创建网络

@@ -26,7 +26,7 @@
                     </div>
                 </div>
             </form>
-            <form  class="form-horizontal" method="post" action="<?php echo site_url('/admin/upload_image')?>">
+            <form  class="form-horizontal" enctype="multipart/form-data" method="post" action="<?php echo site_url('/admin/upload_image')?>">
                 <div>
                     <label for="imageFile" class="col-sm-4 control-label">镜像文件</label>
                     <div class="col-sm-4">

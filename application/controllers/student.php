@@ -54,6 +54,7 @@ class Student extends CI_Controller {
 		$this->load->library("session");
 		$userNum = $this->session->userdata('s_id');
 		$selectedCourse = $this->courseCrud->read_selected_course($userNum);
+		//
 		//get file,submit times
 		$this->load->view('/student/top');
 		$this->load->view('/student/left',array('left'=>'1'));
@@ -81,6 +82,7 @@ class Student extends CI_Controller {
 	function upload_report($courseID){
 		//get userNum
 		//get filepath;
+		
 	}
 
 	function submit_course($courseID){
@@ -169,6 +171,7 @@ class Student extends CI_Controller {
 		//$attackerVM = $this->openstack->read_attacker_VM($courseID);
 		//$targetVM = $this->openstack->read_target_VM($courseID);
 		$VMs = $this->courseCrud->read_vm($courseID,$userNum);
+		// print_r($VMs);
 		$this->load->view('/student/top');
 		$this->load->view('/student/left',array('left'=>"1"));
 		$this->load->view('/student/course/startCourseR',

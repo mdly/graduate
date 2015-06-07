@@ -4,7 +4,7 @@
 			<h3 class="panel-title">创建新课程类型</h3>
 		</div>
 		<div class="panel-body">
-			<form class="form-horizontal" enctype="multipart/form-data" method="post" action="<?php echo site_url('/admin/create_course_action')?>">
+			<form enctype="multipart/form-data" class="form-horizontal" method="post" action="<?php echo site_url('/admin/create_course_action')?>">
 				<div class="form-group">
 					<label for="courseName" class="col-sm-4 control-label">课程名</label>
 					<div class="col-sm-4">
@@ -94,7 +94,7 @@
 				<!--镜像的绑定这边还要考虑一下，或者是动态实现？-->
 				<div class="form-group">
 					<div class="col-sm-offset-2 col-sm-6" align="right">
-						<a href="<?php echo site_url('/admin/show_course_list')?>">取消</a>
+						<a href="<?php echo site_url('/admin/course_manager')?>">取消</a>
 						<button type="submit" class="btn btn-defualt">创建新课程</button>
 					</div>
 				</div>

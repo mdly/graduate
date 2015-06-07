@@ -157,6 +157,8 @@ class CourseCrud extends CI_Model{
 		return $data;
 	}
 	function read_vm($courseID,$userNum){
+		// echo "courseID=".$courseID."<br>";
+		// echo "userNum=".$userNum."<br>";
 		$targetVM = $this->db->select("*")->where("CourseID",$courseID)->where("UserNum",$userNum)->where("isTarget",1)->from("coursevm")->get()->result();
 		$attackerVM = $this->db->select("*")->where("CourseID",$courseID)->where("UserNum",$userNum)->where("isTarget",0)->from("coursevm")->get()->result();
 		$data = array('targetVM' => $targetVM, 'attackerVM'=>$attackerVM);

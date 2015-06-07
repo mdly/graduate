@@ -79,7 +79,10 @@ class General extends CI_Controller{
 
 
 	function download_file($courseID){
-		$course = $this->db->select("File,CourseName")->from("courses")->where("CourseID",$courseID)->get()->result()[0];
+		$course = $this->db->select("File,CourseName")
+		->from("courses")
+		->where("CourseID",$courseID)
+		->get()->result()[0];
 		$filePath = $course->File;
 		$fileName = $course->CourseName;
 		$this->load->helper('download');
