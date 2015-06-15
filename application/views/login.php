@@ -3,63 +3,48 @@
     <head>
         <title>攻防培训平台</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
-        <!-- 新 Bootstrap 核心 CSS 文件 -->
         <link rel="stylesheet" href="<?php echo base_url('bootstrap/css/bootstrap.min.css')?>">
-        <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-        <script src="http://cdn.bootcss.com/jquery/1.11.2/jquery.min.js"></script>
-        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-        <script src="http://cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="<?php echo base_url('public/css/main.css')?>">
+        <script src="<?php echo base_url('bootstrap/js/jquery.min.js')?>"></script>
+        <script src="<?php echo base_url('bootstrap/js/bootstrap.min.js')?>"></script>
     </head>
-    <body>
-        <div class="container">
-            <div class="row"><h1 align="center">攻防培训和演练平台<br><br></h1></div>
-            <!--可以添加class="head_login"
-                对于其他界面，可以添加class="head"
-            -->
-            
-            <div class="row" align="center">
-                <div class="col-md-3"></div>
-                <div class="col-md-6">
+    <body class="ad-login-container">
+        <div class="container ad-login-panel">
+            <div class="row ad-login-header"><h1 align="center" class="ad-login-header">攻防培训和演练平台</h1></div>
+            <div class="row ad-login-form " align="center">
                     <form class="form-horizontal" method="post" action="<?php echo site_url('/login/check')?>">
-                        <div class="form-group">
-                            <label for="login-id" name="login-id" class="col-sm-2 control-label">学号/工号</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" placeholder="请输入学号或工号" name="uNumber">
-                            </div>
+                        <div class="input-group form-group">
+                            <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
+                            <input type="text" class="form-control" placeholder="请输入学号或工号" name="uNumber">
+                        </div>
+                        <div class="input-group form-group">
+                            <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></span>
+                            <input type="password" class="form-control" placeholder="请输入密码" name="uPassword">
+                        </div>
+
+                        <div class="input-group form-group">
+                            <span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span></span>
+                            <input type="text" class="form-control" name="captcha" autocomplete="off" placeholder="验证码" maxlength="5">
                         </div>
                         <div class="form-group">
-                            <label for="login-pass" class="col-sm-2 control-label">密码</label>
-                            <div class="col-sm-10">
-                                <input type="password" class="form-control" placeholder="请输入密码" name="uPassword">
-                            </div>
+                            <img align="right" id="ad-captcha" src="<?php echo site_url('/login/captcha')?>" alt="加载失败" title="点击刷新验证码">
                         </div>
                         <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <img id="captcha" src="<?php echo site_url('/login/captcha')?>" alt="加载失败" title="点击刷新验证码">
-                                </span>
-                                <input type="text" class="form-control" name="captcha" placeholder="验证码" maxlength="5">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10" align="right">
-                                <button type="submit" class="btn btn-defualt">登录</button>
-                            </div>
+                            <button type="submit" class="btn btn-defualt btn-block ">登录</button>
                         </div>
                     </form>
-                </div>
-                <div class="col-md-3"></div>
             </div>
         </div>
-
+        <div><p id="ad-footer-copy">2015 &copy; SJTU INFOSEC</p></div>
 <script type="text/javascript">
 (function($){
     $(function() {
-        $("#captcha").click(function(){
+        $("#ad-captcha").click(function(){
             $(this).attr("src", "<?php echo site_url('/login/captcha?_=');?>" + Math.random());
         });
     });
 })(jQuery);
     </script>
+
     </body>
 </html>

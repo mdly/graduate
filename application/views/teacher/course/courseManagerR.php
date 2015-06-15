@@ -78,7 +78,7 @@
                                 echo "
                                     <tr style='cursor:pointer'>
                                         <td>".$index."</td>
-                                        <td><a href=".site_url("/teacher/show_course_detail/".$data[$i]->CourseID).">".$data[$i]->CourseName."</a></td>
+                                        <td><a href=".site_url("/teacher/read_student_list/".$data[$i]->CourseID).">".$data[$i]->CourseName."</a></td>
                                         <td>".$typeName[$i]."</td>
                                         <td>".$data[$i]->SubmitLimit."次</td>
                                         <td><a href=".site_url('/general/download_file/'.$data[$i]->CourseID).">查看</a></td>

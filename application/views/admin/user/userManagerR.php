@@ -1,5 +1,5 @@
 <div class="col-xs-10">
-    <?php 
+    <?php
     if($result){
         if (!$result['failed']){
             $msgType="alert-success";
@@ -29,8 +29,8 @@
                 <div class="col-xs-8">
                     <div class="input-group">
                         <select class="form-control" name="selectColumn">
-                            <option value="UserNum" <?php if($selectColumn=="userNum")echo"selected='selected'";?>>学号/工号</option>
-                            <option value="UserName"<?php if($selectColumn=="userName")echo"selected='selected'";?>>用户名</option>
+                            <option value="userNum" <?php if($selectColumn=="userNum")echo"selected='selected'";?>>学号/工号</option>
+                            <option value="userName"<?php if($selectColumn=="userName")echo"selected='selected'";?>>用户名</option>
                             <option value="Email"<?php if($selectColumn=="Email")echo"selected='selected'";?>>邮箱</option>
                         </select>
                     </div>
@@ -59,8 +59,8 @@
                             <th>部门</th>
                             <th>邮箱</th>
                             <th>类型</th>                                     
-                            <th>os用户ID</th>                                     
-                            <th>os租户ID</th>  
+                            <!-- <th>os用户ID</th>-->
+                            <!-- <th>os租户ID</th>-->
                         </tr>
                     </thead>                                        
                     <tbody>
@@ -85,8 +85,6 @@
                                         <td>".$data[$i]->Section."</td>
                                         <td>".$data[$i]->Email."</td>
                                         <td>".$Type."</td>
-                                        <td>".$data[$i]->UserID."</td>
-                                        <td>".$data[$i]->TenantID."</td>
                                     </tr>";
                             }
                         ?>

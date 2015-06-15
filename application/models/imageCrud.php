@@ -9,6 +9,7 @@ class ImageCrud extends CI_Model{
 	}
 	function create_image($data){
 		//gaigaigai
+		//first upload to the openstack
 		$this->db->insert("images",$data);
 	}
 	function read_image_list(){

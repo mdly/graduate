@@ -44,7 +44,6 @@ class Admin extends CI_Controller {
 	}
 
 	//(1)user manager:
-
 	function user_manager($type="-1") {
 		//和show_user_list一样，为了和course_manager,image_manager区分而设置
 		$this->load->model('userCrud');
@@ -65,6 +64,7 @@ class Admin extends CI_Controller {
 		$this->load->model('userCrud');
 		$keyword = $_POST["keyword"];
 		$column = $_POST["selectColumn"];
+		// print_r($column);
 		//function search_user($columnName,$keyword,$type="-1")
 		$user = $this->userCrud->search_user($column,$keyword,$type);
 		$this->load->view('/admin/top');
@@ -137,29 +137,43 @@ class Admin extends CI_Controller {
 	}
 	//4.update other user's profile
 	function show_user_detail($userNum){
-		echo "this is view_user:".$userNum;
+		$this->load->model('userCrud');
+		$userData = $this->userCrud->read_user_info($userNum);
+		// print_r($userData);
+
+		$this->load->view('/admin/top');
+		$this->load->view('/admin/left',array('left'=>"1"));
+		$this->load->view('/admin/user/userProfileR',array('data'=>$userData[0],'message'=>""));
+		$this->load->view('/admin/botton');
+		// echo "this is view_user:".$userNum;
 		//这边就直接进入用户的界面就好了。不过会不会有点过于简单粗暴了。。。。
 	}
 	function update_user_action($userNum){
 		//获取用户post过来的用户名
 		//这个目前还没有做
 		//这边不能修改用户的角色类型，否则在openstack中的用户结构也要发生变化，会非常复杂
-		$this->load->model('userCrud');
-		$user = array('UserNum'=>$_POST['userNum'],
-			'UserName'=>$_POST['userName'],
-			'Password'=>md5($_POST['password']),
-			'Gender'=>$_POST['Gender'],
-			'Email'=>$_POST['Email'],
-			'Section'=>$_POST['Section'],
-			'Type'=>$_POST['Type']);
-		$this->userCrud->insert_user($user);
-		$admin = $this->userCrud->update_user_info($user,$userNum);
+
+		$this->load->model('userCrud');	
+		// $userNum = $this->session->userdata('s_id');
+		try {
+			$this->userCrud->update_user_info(
+				array('UserName'=>trim($_POST['userName']),
+					'Gender'=>trim($_POST['Gender']),
+					'Email'=>trim($_POST['Email']),
+					'Section'=>trim($_POST['Section'])),
+				$userNum);
+			$message = "修改成功！";
+		}catch(Exception $e){
+			$message = $e->getMessage();
+		}
+		//if success!
+		// $userNum = $this->session->userdata('s_id');
+		$user = $this->userCrud->read_user_info($userNum)[0];
+		// print_r($user);
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"1"));
-		$this->load->view('/admin/user/userManagerR',
-			array('data'=>$admin));
+		$this->load->view('/admin/user/userProfileR',array('data'=>$user,'message'=>$message));
 		$this->load->view('/admin/botton');
-		//$this->load->view('/admin/user/userManagerAdmin',array('data'=>$admin));
 	}
 
 	//（2）course manager
@@ -458,19 +472,6 @@ class Admin extends CI_Controller {
 		//$this->load->model('openstack');
 		$this->load->model('imageCrud');
 		$this->imageCrud->syc_openstack();
-/*
-		$this->load->model('openstack');
-		$userName = 'symol';
-		$password = 'God!sMe';
-		$token = $this->openstack->authenticate_v2($userName,$password);
-		$tokenExpires = $token['access']['token']['expires'];
-		$tokenID = $token['access']['token']['id'];
-		$imageOS = $this->openstack->get_image_list($tokenID)['images'];
-		for ($i=0;$i<count($imageOS);$i++){
-			$data=array('ImageName'=>$imageOS[$i]['name'],'ImageID'=>$imageOS[$i]['id'],'ImageURL'=>$imageOS[$i]['self'],'ImageDesc'=>'');
-			$this->imageCrud->get_image_from_os($data);
-		}
-		*/
 		$images = $this->imageCrud->read_image_list();
 		//print_r($images);
 		$this->load->view('/admin/top');
@@ -479,9 +480,8 @@ class Admin extends CI_Controller {
 		$this->load->view('/admin/botton');
 	}
 	function image_create(){
-		//在openstack中创建image
-		//在数据库中更新image
-		//$this->load->openstack;	
+		$this->load->model("imageCrud");
+		$this->imageCrud->create_image();
 		$this->load->view('/admin/top');
 		$this->load->view('/admin/left',array('left'=>"3"));
 		$this->load->view('/admin/image/imageCreateR');

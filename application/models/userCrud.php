@@ -4,6 +4,22 @@ class UserCrud extends CI_Model{
 		parent::__construct();
 		$this->load->database();
 	}
+
+	function validate_email($email){
+		if (!filter_var($email,FILTER_VALIDATE_EMAIL)) {
+		//2.check the email is valid.
+			//echo "check 1";
+			$msg = "您输入的邮箱不存在！";
+			$errorNo = 2;
+		}else{
+			$domain = explode('@', $email);
+			//print_r($domain);
+			if(!checkdnsrr($domain[1],'MX')){
+				$msg = "您输入的邮箱不可用！";
+				$errorNo = 3;
+			}
+		}
+	}
 	function create_user($data){
 		//1.check if userNum exists
 		$msg = "";

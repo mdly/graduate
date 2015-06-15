@@ -11,9 +11,9 @@ class Teacher extends CI_Controller{
 		$userNum = $this->session->userdata('s_id');
 		$userType = $this->userCrud->read_user_type($userNum);
 		if ($userType!='1'){
-			echo 'not authorized!';
-			die();
+			echo "<script type='text/javascript'>alert('请登陆！');</script>";
 			$this->load->view("login");
+			// die();
 		}
 	}
 	function index(){
@@ -90,5 +90,35 @@ class Teacher extends CI_Controller{
 		$this->load->view('/teacher/botton');
 
 	}
+	function read_student_list($courseID){
+		$this->load->model('courseCrud');
+		$students = $this->courseCrud->read_student_list($courseID);
+		// $this->load->view('')
+		$this->load->view('/teacher/top');
+		$this->load->view('/teacher/left',array('left'=>"1"));
+		$this->load->view("/teacher/course/studentListR",array('data'=>$students,'activeTop'=>$type,'selectColumn'=>"0",'keyword'=>""));
+		$this->load->view('/teacher/botton');
+
+	}
+	function show_drill_detail($courseID,$studentID){
+		$this->load->model('openstack');
+		$this->load->model('courseCrud');
+		$this->load->library('session');
+		// $userNum = $this->session->userdata('s_id');
+		//$attackerVM = $this->openstack->read_attacker_VM($courseID);
+		//$targetVM = $this->openstack->read_target_VM($courseID);
+		$VMs = $this->courseCrud->read_vm($courseID,$studentID);
+		// print_r($VMs);
+		$this->load->view('/teacher/top');
+		$this->load->view('/teacher/left',array('left'=>"1"));
+		$this->load->view('/student/course/startCourseR',
+			array(
+				'attackerVM'=>$VMs["attackerVM"],
+				'targetVM'=>$VMs['targetVM'],
+				'courseID'=>$courseID));
+		$this->load->view('/teacher/botton');
+
+	}
+
 
 }

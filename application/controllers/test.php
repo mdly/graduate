@@ -66,7 +66,10 @@ class Test extends CI_Controller{
 		$tenantID= $token['tenantID'];
 		$vmID = "7361350a-49e6-49a2-afdf-ec282d00effe";
 		$tenantName = "5110159004";
-		$this->openstack->create_keypair($tokenID,$tenantID,$tenantName);
+		// $this->openstack->create_keypair($tokenID,$tenantID,$tenantName);
+		$name= "test";
+		$this->openstack->create_image($tokenID,$name,$imagePath="");
+
 
 		// $this->openstack->delete_server($tokenID,$tenantID,"5110159004",$vmID);
 

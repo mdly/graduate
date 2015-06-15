@@ -20,5 +20,11 @@
             <p>IP版本：<?php echo($version)?></p>
             <p><a class="btn btn-default" href="<?php echo($VMURL);?>" role="button">进入控制台 »</a></p>
         </div>
-    </div>                        
+    </div>
+
+    <div class = "col-sm-12">
+        <div class="col-sm-offset-2 col-sm-6" align="right">
+            <a href="<?php echo site_url('/student/start_course/'.$courseID);?>">返回我的课程</a>
+        </div>
+    </div>                    
 </div>

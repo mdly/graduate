@@ -22,7 +22,7 @@ class General extends CI_Controller{
 	}
 	function logout() {
 		$this->session->unset_userdata('s_id');
-		$this->load->view('login');
+		$this->load->view('login',array('message'=>""));
 	}
 
 
@@ -66,7 +66,7 @@ class General extends CI_Controller{
 			// $result = $this->openstack->reset_password($userNum,$password);
 			// if (!$result['failed']) $failed = 0;
 			$this->session->unset_userdata('s_id');
-			$this->load->view('login');
+			$this->load->view('login',array('message'=>""));
 		}else{
 			$message = "failed to reset password";
 			$this->load->view('/'.$role.'/top');
@@ -91,6 +91,21 @@ class General extends CI_Controller{
 		$format = $format[count($format)-1];
 		echo "alert(".$format.")";
 		$name = $fileName."指导书.".$format;
+		force_download($name,$data);
+	}
+	function download_report($selectionID){		
+		$report = $this->db->select("ReportPath,StudenID")
+		->from("selectcourse")
+		->where("SelectionID",$selectionID)
+		->get()->result()[0];
+		$filePath = $report->ReportPath;
+		$fileName = $report->StudenID;
+		$this->load->helper('download');
+		$data = file_get_contents($filePath);
+		$format = explode(".", $filePath);
+		$format = $format[count($format)-1];
+		echo "alert(".$format.")";
+		$name = $fileName."报告.".$format;
 		force_download($name,$data);
 	}
 	function get_VM_detail($vmID){

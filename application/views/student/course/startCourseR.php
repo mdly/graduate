@@ -1,9 +1,23 @@
 <div class="col-xs-10">
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h3 class="panel-title">开始演练</h3>
-		</div>
-		<div class="panel-body">
+    <div class="nav nav-tabs">
+        	<div align="center">
+				<a id="ad-basic-page" href="<?php echo site_url('/student/show_my_course_detail/'.$courseID)?>">基本信息</a>
+			</div>
+
+        	<div align="center">
+				<a id="ad-active-page" href="<?php echo site_url('/student/start_course/'.$courseID)?>">演练实践</a>
+			</div>
+
+        	<div align="center">
+				<a id="ad-basic-page" href="<?php echo site_url('/student/upload_report/'.$courseID)?>">提交报告</a>
+			</div>
+    </div>
+
+
+	<div>
+		<br>
+		<br>
+		<div>
 			<form enctype="multipart/form-data" class="form-horizontal" method="post">
 				<div class="form-group">
 					<label for="imageIDAtk" class="col-sm-4 control-label">攻击机实例</label>
@@ -18,11 +32,11 @@
 						for ($i=0; $i < count($attackerVM); $i++) {
 							echo "
 							<div class='col-sm-4'>
-								<a class='btn btn-default btn-block' href=".site_url("/general/get_VM_detail/".$attackerVM[$i]->VMID)." role='button'>".$attackerVM[$i]->VMName."</a>
+								<a class='btn btn-default btn-block' href=".site_url("/student/get_VM_detail/".$attackerVM[$i]->VMID)." role='button'>".$attackerVM[$i]->VMName."</a>
 
 							</div>
 							<div class='col-sm-4'>
-								<a class='btn btn-default' href=".site_url('/student/delete_VM_action/'.$courseID."/".$attackerVM[$i]->VMID)."><span class='glyphicon glyphicon-minus' aria-hidden='true'></span></a>
+								<a class='btn btn-default' href=".site_url('/student/delete_VM_action/'.$courseID."/".$attackerVM[$i]->VMID)."><span class='glyphicon glyphicon-trash' aria-hidden='true'></span></a>
 							</div>
 							<label class='col-sm-4'></label>
 							";
@@ -54,10 +68,10 @@
 						for ($i=0; $i < count($targetVM); $i++) {
 							echo "
 							<div class='col-sm-4'>
-								<a class='btn btn-default btn-block' href=".site_url("/general/get_vm_detail/".$targetVM[$i]->VMID)." role='button'>".$targetVM[$i]->VMName."</a>
+								<a class='btn btn-default btn-block' href=".site_url("/student/get_vm_detail/".$targetVM[$i]->VMID)." role='button'>".$targetVM[$i]->VMName."</a>
 							</div>
 							<div class='col-sm-4'>
-								<a class='btn btn-default' href=".site_url('/student/delete_VM_action/'.$courseID."/".$targetVM[$i]->VMID)."><span class='glyphicon glyphicon-minus' aria-hidden='true'></span></a>
+								<a class='btn btn-default' href=".site_url('/student/delete_VM_action/'.$courseID."/".$targetVM[$i]->VMID)."><span class='glyphicon glyphicon-trash' aria-hidden='true'></span></a>
 							</div>
 							<label class='col-sm-4'></label>
 							";
@@ -76,7 +90,7 @@
 				<!--created字段由系统设置-->
 				<div class="form-group">
 					<div class="col-sm-offset-2 col-sm-6" align="right">
-						<a href="<?php echo site_url('/student/course_manager')?>">返回课程列表</a>
+						<a href="<?php echo site_url('/student/course_manager')?>">返回我的课程</a>
 					</div>
 				</div>
 			</form>

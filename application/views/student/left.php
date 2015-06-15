@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-xs-2">
             <ul class="nav nav-pills nav-stacked">
-                <li role="presentation"<?php if($left==(0)) echo "class = 'active'";?>><a href="<?php echo site_url('/student/index');?>">系统概况</a></li>
+                <li role="presentation"<?php if($left==(0)) echo "class = 'active'";?>><a href="<?php echo site_url('/student/index');?>">课程中心</a></li>
                 
                 <li role="presentation"<?php if($left==(1)) echo "class = 'active'";?>><a href="<?php echo site_url('/student/course_manager');?>">我的课程</a></li>
                 <li role="presentation"<?php if($left==(2)) echo "class = 'active'";?>><a href="<?php echo site_url('/student/network_manager');?>">我的网络</a></li>

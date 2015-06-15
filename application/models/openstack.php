@@ -277,27 +277,15 @@ class Openstack extends CI_Model{
 	}
 
 	function get_server_detail($vmID){
-		$tenantID=$this->authenticate_v2()['access']['token']['tenant']['id'];
-		$tokenID = $this->authenticate_v2()['access']['token']['id'];
-		// $url = ":8774/v2.1/servers/".$vmID;
-		// $url = ":8774/v2.1/servers/4782ad94a84e41919b5d0760581ba430";
-		// $url = ":8774/".$tenantID."servers/".$vmID;
-		// $url = ":8774/v2.1/servers/7361350a-49e6-49a2-afdf-ec282d00effe";
-		// $url = ":8774/v2.1/servers/7361350a-49e6-49a2-afdf-ec282d00effe/ips";
-		// print_r($VMURL);
+		$token = $this->authenticate_v2();
+		$tenantID=$token['access']['token']['tenant']['id'];
+		$tokenID = $token['access']['token']['id'];
 		$url = ":8774/v2/".$tenantID."/servers/".$vmID;
 		$method="GET";
 		$header = array('X-Auth-Token: '.$tokenID);
 		$vmInfo = $this->curl_opt($url,$method,$data="",$header)['server'];
-		// echo "this is os";
 		$VMURL = $this->get_server_url($tokenID,$tenantID,$vmID);
-		// $site="192.168.28.1";
-		// $slash_token = $this->slash_ID($tokenID);
-		// $slash_serverID = $this->slash_ID($vmID);
-
-		// $url = "http://".$site.":6080/vnc_auto.html?token=".$slash_token."&title=".$vmInfo['name']."(".$vmID.")";
-		// $url = $this->get_vm();
-		// return array('basicInfo'=>$vmInfo,'url'=>$url);
+		// print_r($vmInfo);
 		return array('basicInfo'=>$vmInfo,'url'=>$VMURL);
 	}
 	function create_network($tokenID,$name,$subnetName,$subnetCIDR){
@@ -316,6 +304,66 @@ class Openstack extends CI_Model{
 	}
 	function create_router($tokenID){
 		echo "we are developing it...";
+	}
+	function create_image($tokenID,$name,$imagePath){
+
+
+		// curl -i -X PUT -H "X-Auth-Token: $token" 
+		// -H "Content-Type: application/octet-stream" 
+		// -d @/home/glance/ubuntu-12.10.qcow2 $image_url/v2/images/{image_id}/file
+		$url = ":9292/v1/images";
+		$method = "POST";
+		$header = array('X-Auth-Token: '.$tokenID);
+		$data = array('name'=>$name);
+		$this->curl_opt($url,$method,$data,$header,false);
+
+// curl -g -i -X POST 
+// -H 'Accept-Encoding: gzip, deflate' 
+// -H 'x-image-meta-container_format: bare' 
+// -H 'Accept: */*' 
+// -H 'X-Auth-Token: {SHA1}2e98002171130d1f5e122507d24de80aca792780'
+// -H 'x-image-meta-size: 262275584' 
+// -H 'Connection: keep-alive'
+// -H 'x-image-meta-is_public: True' 
+// -H 'User-Agent: python-glanceclient' 
+// -H 'Content-Type: application/octet-stream' 
+// -H 'x-image-meta-disk_format: qcow2' 
+// -H 'x-image-meta-name: ubuntu1204'
+
+		// $url=":9292/v2/images/".$imageID."/file";
+		// $method="POST";
+		// $header=array();
+		// $header[] = 'User-Agent: python-novaclient';
+		// $header[] = 'Content-type: application/octet-stream';
+		// $header[] = 'Accept: application/json';
+		// $header[] = 'X-Auth-Token: '.$tokenID;
+		// $data = $imagePath;"
+
+
+// <http-version>1.1</http-version>
+// <http-follow-redirects/>
+// <URL>https://[FLOATING_IP_ADDRESS]:9292/v1/images</URL>
+// <method>POST</method>
+// <ssl>
+// <trust-self-signed-cert/>
+// <hostname-verifier>ALLOW_ALL</hostname-verifier>
+// <truststore file="[PATH_TO_TRUSTSTORE]" password="[TRUSTSTORE_PWD]"/>
+// </ssl>
+// <headers>
+// <header key="x-image-meta-container_format" value="ovf"/>
+// <header key="x-image-meta-disk_format" value="vmdk"/><header key="x-image-meta-name" value="[IMAGE_NAME]"/>
+// <header key="X-Auth-Token" value="[KEYSTONE_TOKEN]"/>
+// </headers>
+// <body>
+// <file content-type="application/octet-stream" charset="UTF-8">[PATH_TO_IMAGE_FILE]</file>
+// </body>
+// </request>
+// </rest-client>
+
+
+
+
+
 	}
 }
 ?>

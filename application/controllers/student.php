@@ -3,7 +3,7 @@
 class Student extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
-		//首先检查用户是否已经登录，用户类型是否是管理员
+		//首先检查用户是否已经登录，用户类型是否是学生
 		$this->load->library('session');
 		$this->load->model('userCrud');	
 		$userNum = $this->session->userdata('s_id');
@@ -14,39 +14,100 @@ class Student extends CI_Controller {
 			$this->load->view("login");
 		}
 	}
-	function index(){
-		$this->load->model('courseCrud');
-		//$unselectedCourse = $this->courseCrud->read;
+	function is_login(){		
+		$this->load->library('session');
+		$this->load->model('userCrud');	
+		$userNum = $this->session->userdata('s_id');
+		$userType = $this->userCrud->read_user_type($userNum);
+		$errorMsg = "";
+		if(!$userNum){
+			$errorMsg = "请登录！";
+		}
+		if ($userType!='2'){
+			$errorMsg = "当前登录账号无此权限！";
+		}
+		return $errorMsg;
+	}
+	function index($type="-1"){
+		// $this->is_login();
+		$this->load->model("courseCrud");
+		//read_course_list($type="0",$isAdmin="0")
 		$courseType = $this->courseCrud->read_type_list();
-		$course = $this->courseCrud->read_course_list("-1","0");
-		//echo $course[0]->File;
-		//$all = $this->courseCrud->count_course();
 		$this->load->library('session');
 		$userNum = $this->session->userdata('s_id');
-		$unselectedCourse = $this->courseCrud->read_unselected_course($userNum);
-		$selectedCourse = $this->courseCrud->read_selected_course($userNum);
-		$finishedCourse = $this->courseCrud->read_finished_course($userNum);
+		$course = $this->courseCrud->read_course_list_student($type,$userNum);
 		$this->load->view('/student/top');
 		$this->load->view('/student/left',array('left'=>"0"));
-		$this->load->view('/student/overviewR',
-			array("unselectedCourse"=>count($unselectedCourse),
-				"selectedCourse"=>count($selectedCourse),
-				"finishedCourse"=>count($finishedCourse))
-			);
-		// $this->load->view('/student/studentR',array('data'=>$course,'courseType'=>$courseType));
+		$this->load->view("/student/overviewR",
+			array('data'=>$course['course'],
+				'courseType'=>$courseType,
+				'selected'=>$course['selected'],
+				'typeName'=>$course['typeName'],
+				'teacher'=>$course['teacher'],
+				'activeTop'=>$type,
+				'selectColumn'=>"0",
+				'keyword'=>""));
 		$this->load->view('/student/botton');
 	}
-	function course_manager(){
+	function course_manager($finished='0'){
 		$this->load->model('courseCrud');
-		$this->load->library("session");
+		$this->load->library('session');
 		$userNum = $this->session->userdata('s_id');
-		$courseType = $this->courseCrud->read_type_list();
-		$course = $this->courseCrud->read_course_list("-1","0");
-		$unselectedCourse = $this->courseCrud->read_unselected_course($userNum);
-		//echo $course[0]->File;
+		// get the selected  course info;
+		// $data = $this->courseCrud->
 		$this->load->view('/student/top');
 		$this->load->view('/student/left',array('left'=>"1"));
-		$this->load->view('/student/course/courseManagerR',array('data'=>$unselectedCourse,'courseType'=>$courseType));
+
+		if($finished){
+			$course = $this->courseCrud->read_finished_course($userNum);
+			$this->load->view("/student/course/courseFinishedR",
+				array('data'=>$course,
+					'activeTop'=>$finished));
+		}else{
+			$course = $this->courseCrud->read_selected_course($userNum);
+			// print_r($course);
+			$this->load->view("/student/course/courseSelectedR",
+				array('data'=>$course,'activeTop'=>$finished));
+		}
+		$this->load->view('/student/botton');
+	}
+	function search_course(){
+		// 
+	}
+
+	function get_VM_detail($vmID){
+		$this->load->model('openstack');
+		$token = $this->openstack->get_tokenID();
+		// $tokenID = $token['access']['token']['id'];
+		// $urlToken = substr($tokenID, 0,8)."-".substr($tokenID, 8,4)."-".substr($tokenID, 12,4)."-".substr($tokenID, 14,4)."-".substr($tokenID, 18);
+		// $this->load->view()
+		$this->load->model("userCrud");
+		$VMInfo = $this->openstack->get_server_detail($vmID);
+		$this->load->model("courseCrud");
+		$courseID = $this->courseCrud->read_courseID_by_vmID($vmID);
+		$this->load->view('/student/top');
+		$this->load->view('/student/left',array('left'=>"1"));
+		$this->load->view('/student/course/vmDetailR',
+				array('data'=>$VMInfo['basicInfo'],
+					'VMURL'=>$VMInfo['url'],
+					'courseID'=>$courseID));
+		$this->load->view('/student/botton');
+
+	}
+	function show_course_detail($courseID){
+		$this->load->model("courseCrud");
+		$data = $this->courseCrud->read_course_detail_student($courseID);
+		$this->load->view('/student/top');
+		$this->load->view('/student/left',array('left'=>"0"));
+		$this->load->view("/student/course/courseDetailR",array("data"=>$data));
+		$this->load->view('/student/botton');
+	}
+	function show_my_course_detail($courseID){
+		$this->load->model("courseCrud");
+		$data = $this->courseCrud->read_course_detail_student($courseID);
+		$this->load->view('/student/top');
+		$this->load->view('/student/left',array('left'=>"1"));
+		$this->load->view("/student/course/myCourseDetail",array("data"=>$data));
 		$this->load->view('/student/botton');
 	}
 	function selected_course_manager(){
@@ -54,7 +115,6 @@ class Student extends CI_Controller {
 		$this->load->library("session");
 		$userNum = $this->session->userdata('s_id');
 		$selectedCourse = $this->courseCrud->read_selected_course($userNum);
-		//
 		//get file,submit times
 		$this->load->view('/student/top');
 		$this->load->view('/student/left',array('left'=>'1'));
@@ -80,9 +140,41 @@ class Student extends CI_Controller {
 		$this->selected_course_manager();
 	}
 	function upload_report($courseID){
-		//get userNum
-		//get filepath;
-		
+		// show the submilimite and the times already submit.
+		$this->load->model("courseCrud");
+		$this->load->library('session');
+		$userNum = $this->session->userdata('s_id');
+		// echo "userNum =";
+		// print_r($userNum);
+		$submit = $this->courseCrud->read_reportLimit_student($courseID,$userNum);
+		$this->load->view('/student/top');
+		$this->load->view('/student/left',array('left'=>'1'));
+		$this->load->view("/student/course/uploadReportR",
+			array("courseID"=>$courseID,
+				'submitLimit'=>$submit['submitLimit'],
+				'submitTimes'=>$submit['submitTimes'],
+				));
+		$this->load->view('/student/botton');
+	}
+	function upload_report_action($courseID){
+		$this->load->model('courseCrud');
+		$config['upload_path']='./uploads';
+		$config['allowed_types']='pdf|doc|docx';
+		$config['max_size']='10240000';//10mb
+		$config['file_name']  = time();
+		$this->load->library('upload',$config);
+		$data = $this->upload->do_upload('file');
+		if($data){
+			$file_info = array('upload_data'=>$this->upload->data());
+		}else{
+			$error=array('error'=>$this->upload->display_errors());
+			$file_info['upload_data']['full_path']="";
+			var_dump($error);
+		}
+		$this->load->library("session");
+		$userNum = $this->session->userdata('s_id');
+		$this->courseCrud->submit_report($courseID,$userNum,$file_info['upload_data']['full_path']);
+		$this->upload_report($courseID);
 	}
 
 	function submit_course($courseID){
