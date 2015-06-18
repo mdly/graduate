@@ -69,13 +69,15 @@ class ImageCrud extends CI_Model{
 		return $data;
 	}
 	function add_courseImage($isTarget,$courseID,$imageID){
-	$data = $this->db->select("*")->from("courseImage")->where("CourseID",$courseID)->where("ImageID",$imageID)->where("isTarget",$isTarget)->get()->result();
+		// print_r($imageID);
+		$data = $this->db->select("*")->from("courseImage")->where("CourseID",$courseID)->where("ImageID",$imageID)->where("isTarget",$isTarget)->get()->result();
 		
 		if($data){
 			print_r($data);
-			echo"this image has been add into the course";
+			echo"this image has been added into the course";
 		}else{
 			$image = $this->db->select("ImageName,ImageURL")->from('images')->where("ImageID",$imageID)->get()->result()[0];
+print_r($image);
 			$imageName = $image->ImageName;
 			$imageURL = $image->ImageURL;
 			$data = array("ImageID"=>$imageID,"ImageName"=>$imageName,"ImageURL"=>$imageURL,"CourseID"=>$courseID,"isTarget"=>$isTarget);
@@ -89,7 +91,12 @@ class ImageCrud extends CI_Model{
 		$this->load->model("openstack");
 		$token = $this->openstack->authenticate_v2();
 		//print_r($token);
-		$images = $this->openstack->get_resources($token['access']['token']['id'],$token['access']['token']['tenant']['id'],'image')['images'];
+		$images = $this->openstack->get_resources(
+			$token['access']['token']['id'],
+			$token['access']['token']['tenant']['id'],
+			'image')['images'];
+		// print_r($images);
+		// function get_resources($tokenID,$tenantID,$resources)
 		//$images = $this->openstack->get_resources($token['access']['token']['id'],$token['access']['token']['tenant']['id'],'image');
 		//print_r($images);
 		//只有那些已经创建完成的才能被添加到数据库中！

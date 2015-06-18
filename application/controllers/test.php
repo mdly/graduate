@@ -41,14 +41,14 @@ class Test extends CI_Controller{
 		echo "<br>";
 		echo "roleID_member=";
 		print_r($roleID_member);*/
-		$this->load->model("openstack");
-		//$result= $this->openstack->delete_user("fa65238a341a4945bca2a5381c6b10b7");
-		$this->load->database();
-		$this->db->where("StudentID","5110159006")->delete("selectcourse");
-		//print_r($result);
-		$token = $this->openstack->get_admin_token();
-		$tokenID = $token['tokenID'];
-		//$this->openstack-> run_VM($tokenID,"3cedbe928a884c4ebeca586f24f34404","47bd8248-29aa-4280-ab9f-f43919ffa42c","1","123","b2b20621-530f-42e6-acf3-2b979e8c9d74");
+		// $this->load->model("openstack");
+		// //$result= $this->openstack->delete_user("fa65238a341a4945bca2a5381c6b10b7");
+		// $this->load->database();
+		// $this->db->where("StudentID","5110159006")->delete("selectcourse");
+		// //print_r($result);
+		// $token = $this->openstack->get_admin_token();
+		// $tokenID = $token['tokenID'];
+		// //$this->openstack-> run_VM($tokenID,"3cedbe928a884c4ebeca586f24f34404","47bd8248-29aa-4280-ab9f-f43919ffa42c","1","123","b2b20621-530f-42e6-acf3-2b979e8c9d74");
 		// $data ='{"server": {"name": "test1", "imageRef": "47bd8248-29aa-4280-ab9f-f43919ffa42c", "flavorRef": "1", "max_count": 1, "min_count": 1, "networks": [{"uuid": "caa44e0b-97c8-4aab-aa50-af69ba2f6007"}]}}';
 		// print_r($data);
 		// $json = json_decode($data);
@@ -58,21 +58,26 @@ class Test extends CI_Controller{
 		//$this->load->model('courseCrud');
 		//$result = $this->courseCrud->read_vm(30,5110159004);
 		// print_r($tokenID);
-		echo $tokenID;
+		// echo $tokenID;
 		// $token = substr($tokenID, 0,8);
 		// echo "<br>";
 		// $token = substr($tokenID, 0,8)."-".substr($tokenID, 8,4)."-".substr($tokenID, 12,4)."-".substr($tokenID, 14,4)."-".substr($tokenID, 18);
 		// echo "$token";
-		$tenantID= $token['tenantID'];
-		$vmID = "7361350a-49e6-49a2-afdf-ec282d00effe";
-		$tenantName = "5110159004";
+		// $tenantID= $token['tenantID'];
+		// $vmID = "7361350a-49e6-49a2-afdf-ec282d00effe";
+		// $tenantName = "5110159004";
 		// $this->openstack->create_keypair($tokenID,$tenantID,$tenantName);
-		$name= "test";
-		$this->openstack->create_image($tokenID,$name,$imagePath="");
+		// $name= "test";
+		// $this->openstack->create_image($tokenID,$name,$imagePath="");
 
 
 		// $this->openstack->delete_server($tokenID,$tenantID,"5110159004",$vmID);
-
+		$this->load->model('courseCrud');
+		$this->load->model('imageCrud');
+		$courseID = $this->courseCrud->get_lately_added_courseID();
+		$isTarget = '1';
+		$imageID = '6ba6c84b-0646-4b4a-ac0d-c8ce1d95f697';
+		$this->imageCrud->add_courseImage($isTarget,$courseID,$imageID);
 
 	}
 	

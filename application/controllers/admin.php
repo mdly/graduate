@@ -27,8 +27,6 @@ class Admin extends CI_Controller {
 		$user = $this->userCrud->count_user();
 		$this->load->model('courseCrud');
 		$course = $this->courseCrud->count_course();
-		$this->load->model('imageCrud');
-		$image = $this->imageCrud->count_image();
 		$data = array('NAdmin' => $user[0],
 			'NTeacher' => $user[1],
 			'NStudent' => $user[2],
@@ -297,6 +295,7 @@ class Admin extends CI_Controller {
 		$teachers = $this->userCrud->read_teacher_list();
 		$types = $this->courseCrud->read_type_list();
 		$images = $this->imageCrud->read_image_list();
+		// print_r($images);
 		//$token = $this->openstack->authenticate_v2($userName,$password);
 		//$imagesOS = $this->imageCrud->get_image_list_os();
         if(count($images)==0) {
@@ -304,6 +303,13 @@ class Admin extends CI_Controller {
 			$this->load->view('/admin/top');
 			$this->load->view('/admin/left',array('left'=>"2"));
         	$this->load->view('/admin/image/imageCreateR');
+			$this->load->view('/admin/botton');
+        }
+        if(count($teachers)==0){
+        	echo "<script>alert('please create teacher first!')</script>";
+			$this->load->view('/admin/top');
+			$this->load->view('/admin/left',array('left'=>"1"));
+        	$this->load->view('/admin/user/userCreateR');
 			$this->load->view('/admin/botton');
         }
 		$this->load->view('/admin/top');
@@ -391,23 +397,47 @@ class Admin extends CI_Controller {
 		$data = $this->upload->do_upload('file');
 		if($data){
 			$file_info = array('upload_data'=>$this->upload->data());
+			$newCourse = array('CourseName'=>$_POST['courseName'],'TeacherID'=>$_POST['teacherID'],
+				'TypeID'=>$_POST['typeID'],'Duration'=>$_POST['duration'],'File'=>$file_info['upload_data']['full_path'],
+				'SubmitLimit'=>$_POST['submitLimit'],'CourseDesc'=>$_POST['courseDesc'],
+				'StartTime'=>$_POST['startTime'],'StopTime'=>$_POST['stopTime'],'Location'=>$_POST['location']);
+			//$newType = array('TypeName'=>$_POST['typeName'],'TypeDesc'=>$_POST['Description']);
+			$this->courseCrud->create_course($newCourse);
+
+			//add courseVM
+
+			$courseID = $this->courseCrud->get_lately_added_courseID();
+			$this->load->model("imageCrud");
+			$attackerImage = ($_POST['attackerImage']);
+			if(!$attackerImage){
+				$isTarget = "0";
+				$this->imageCrud->add_courseImage($isTarget,$courseID,$attackerImage);
+			}
+			$targetImage = $_POST['targetImage'];
+			if(!$targetImage){
+				$isTarget = "1";
+				$this->imageCrud->add_courseImage($isTarget,$courseID,$targetImage);
+			}
+
+			$course = $this->courseCrud->read_course_list("-1","1");
+			$courseType = $this->courseCrud->read_type_list();
+			$this->load->view('/admin/top');
+			$this->load->view('/admin/left',array('left'=>"2"));
+			$this->load->view("/admin/course/courseManagerR",array('data'=>$course,'courseType'=>$courseType,'activeTop'=>-1,'selectColumn'=>"0",'keyword'=>""));
+			$this->load->view('/admin/botton');
+
 		}else{
 			$error=array('error'=>$this->upload->display_errors());
 			$file_info['upload_data']['full_path']="";
 			var_dump($error);
 		}
-		$newCourse = array('CourseName'=>$_POST['courseName'],'TeacherID'=>$_POST['teacherID'],
-			'TypeID'=>$_POST['typeID'],'Duration'=>$_POST['duration'],'File'=>$file_info['upload_data']['full_path'],
-			'SubmitLimit'=>$_POST['submitLimit'],'CourseDesc'=>$_POST['courseDesc'],
-			'StartTime'=>$_POST['startTime'],'StopTime'=>$_POST['stopTime'],'Location'=>$_POST['location']);
-		//$newType = array('TypeName'=>$_POST['typeName'],'TypeDesc'=>$_POST['Description']);
-		$this->courseCrud->create_course($newCourse);	
-		$course = $this->courseCrud->read_course_list("-1","1");
-		$courseType = $this->courseCrud->read_type_list();
-		$this->load->view('/admin/top');
-		$this->load->view('/admin/left',array('left'=>"2"));
-		$this->load->view("/admin/course/courseManagerR",array('data'=>$course,'courseType'=>$courseType,'activeTop'=>-1,'selectColumn'=>"0",'keyword'=>""));
-		$this->load->view('/admin/botton');
+		
+		// $this->load->model('courseCrud');
+		// $this->load->model('imageCrud');
+		// $courseID = $this->courseCrud->get_lately_added_courseID();
+		// $isTarget = '1';
+		// $imageID = '6ba6c84b-0646-4b4a-ac0d-c8ce1d95f697';
+		// $this->imageCrud->add_courseImage($isTarget,$courseID,$imageID);
 		//$this->load->view("/admin/course/courseManager",array('data'=>$course,'courseType'=>$courseType,'activeTop'=>-1,'selectColumn'=>"0",'keyword'=>""));
 	
 	}

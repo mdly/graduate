@@ -90,6 +90,34 @@
 					</div>
 					<label class="col-sm-4"></label>
 				</div>
+
+				<div class="form-group">
+					<label for="attackerImage" class="col-sm-4 control-label">攻击机镜像</label>
+					<div class="col-sm-4">
+						<select class="form-control" id="attackerImage" name="attackerImage">
+							<option value="">暂不指定</option>
+							<?php
+							for ($i=0;$i<count($images);$i++)
+								echo "<option value=".$images[$i]->ImageID.">".$images[$i]->ImageName."</option>";
+							?>
+						</select>
+					</div>
+					<label class="col-sm-4"></label>
+				</div>
+				<div class="form-group">
+					<label for="targetImage" class="col-sm-4 control-label">靶机镜像</label>
+					<div class="col-sm-4">
+						<select class="form-control" id="targetImage" name="targetImage">
+							<option value="">暂不指定</option>
+							<?php
+							for ($i=0;$i<count($images);$i++)
+								echo "<option value=".$images[$i]->ImageID.">".$images[$i]->ImageName."</option>";
+							?>
+						</select>
+					</div>
+					<label class="col-sm-4"></label>
+				</div>				
+
 				<!--created字段由系统设置-->
 				<!--镜像的绑定这边还要考虑一下，或者是动态实现？-->
 				<div class="form-group">

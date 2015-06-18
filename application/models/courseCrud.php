@@ -356,7 +356,18 @@ class CourseCrud extends CI_Model{
 		->where("CourseID",$courseID)
 		->get()->result();
 		return $data;
+	}
 
+	function get_lately_added_courseID(){
+		$data = $this->db->select("*")
+			->limit(1)
+			->from("courses")
+			->order_by("CourseID","desc")
+			->get()->result();
+		return $data[0]->CourseID;
+		// print_r($data);
+		// $query = "select top 1 * from courses order by CourseID desc";
+		// $data = $this->db->query($query);
 	}
 }
 ?>
