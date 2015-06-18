@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
     <?php
     if($result){
         if (!$result['failed']){
