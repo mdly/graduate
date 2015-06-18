@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
     <div class="panel panel-default">
         <!-- Default panel contents -->
         <div class="panel-heading">用户信息</div>

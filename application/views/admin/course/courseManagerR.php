@@ -1,4 +1,4 @@
-<div class="col-xs-10">                        
+<div>                        
     <div>                               
         <ul class="nav nav-tabs">
             <?php 

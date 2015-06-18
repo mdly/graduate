@@ -11,6 +11,10 @@
 html {
  height: 100%;
 }
+body {
+  position: relative;
+  min-height: 100%;
+}
 
 .ad-header{
     position: relative;
@@ -106,3 +110,69 @@ html {
 /*    margin-right: -15px;*/
 /*    margin-bottom: 15px;*/
 }
+
+
+
+
+/* start */
+#ad-main-wrapper {
+  /*position: relative;*/
+}
+#ad-nav-left {
+  width: 180px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  padding-top: 51px;
+  min-height: 100%;
+  background-color: #F8F8F8;
+  border-right: 1px solid #EEE;
+  /*box-shadow: 0px 0px 6px rgba(0,0,0,.1);*/
+}
+#ad-nav-left .nav-pills li  {
+  margin-top: 0px;
+}
+#ad-nav-left .nav-pills li a {
+  border-bottom: 1px solid #EEE;
+  box-shadow: #FFF 0 1px 0;
+  border-radius: 0;
+  text-align: center;
+  color: #777;
+}
+#ad-nav-left .nav-pills li a:hover {
+  color: #333;
+  background-color: #F4F4F4;
+}
+#ad-nav-left .nav-pills li.active a {
+  border-top: 1px solid #E4E4E4;
+  margin-top: -1px;
+  border-bottom-color: #EEE;
+
+  background-color: #EEE;
+  color: #333;
+  position: relative;
+}
+#ad-nav-left .nav-pills li.active a::before,
+#ad-nav-left .nav-pills li.active a::after
+{
+  content: "";
+  font-size: 0;
+  position: absolute;
+  border-width: 6px 10px;
+  border-style: solid;
+  right: -2px;
+  top: 50%;
+  margin-top: -6px;
+  z-index: 1;
+}
+#ad-nav-left .nav-pills li.active a::before {
+  border-color: transparent #E2E2E2 transparent transparent;
+  margin-right: 2px;
+}
+#ad-nav-left .nav-pills li.active a::after {
+  border-color: transparent #FFF transparent transparent;
+}
+#ad-main-container {
+  margin-left: 180px;
+}
+/* end */

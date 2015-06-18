@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
     <div class="table-responsive">
         <div>
             <form class="form-horizontal" method="post" action="<?php echo site_url('/admin/course_add_image_action/'.$obj.'/'.$courseID)?>">
