@@ -176,4 +176,19 @@ body {
 #ad-main-container {
   margin-left: 180px;
 }
+
+.nav-tabs>li {
+  margin-bottom: -1px;
+}
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+  border: none;
+  padding: 11px 16px 7px;
+  border-bottom: 4px solid #337ab7;
+}
+.nav>li>a:focus, .nav>li>a:hover {
+  background-color: #FFF;
+  border: none;
+  padding: 11px 16px 8px;
+  border-bottom: 2px solid #337ab7;
+}
 /* end */
