@@ -1,5 +1,5 @@
 <?php $allCourse = $unselectedCourse + $selectedCourse + $finishedCourse;?>
-<div class="col-xs-10">
+<div>
     <div class="row">
         <div class="col-xs-4">
             <h2>课程概况</h2>

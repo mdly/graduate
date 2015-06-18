@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
 
     <div class="nav nav-tabs">
         	<div align="center">

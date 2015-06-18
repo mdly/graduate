@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
     <div>
         <ul class="nav nav-tabs">
             <li role="presentation" name = "allUser" <?php if ($activeTop=="-1") echo "class='active'";?>><a href="<?php $operation='/admin/user_manager/-1'; echo site_url($operation);?>">所有用户</a></li>

@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
     <div>
         <ul class="nav nav-tabs">
             <li role="presentation"><a href="<?php echo site_url('/student/course_manager')?>">进行中的课程</a></li>

@@ -1,5 +1,5 @@
 
-<div class="col-xs-10">
+<div>
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h3 class="panel-title">选课情况</h3>

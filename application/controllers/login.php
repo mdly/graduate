@@ -69,8 +69,8 @@ class Login extends CI_Controller {
 
 	public function captcha() {
 		$this->load->library("captcha/CaptchaBuilder");
-		$this->captchabuilder->setBackgroundColor(85,85,85);
-		$this->captchabuilder->setTextColor(238,238,238);
+		$this->captchabuilder->setBackgroundColor(255,255,255);
+		// $this->captchabuilder->setTextColor(238,238,238);
 		$this->captchabuilder->setDistortion(false);
 
 		$this->captchabuilder->build(100, 35);

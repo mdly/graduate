@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
 <?php
     if (array_key_exists("public", $data['addresses'])) {
         $addr = $data['addresses']['public'][0]['addr'];

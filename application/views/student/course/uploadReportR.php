@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
     <div class="nav nav-tabs">
         	<div align="center">
 				<a id="ad-basic-page" href="<?php echo site_url('/student/show_my_course_detail/'.$courseID)?>">基本信息</a>

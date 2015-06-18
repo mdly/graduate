@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
     <form class="form-horizontal" method="post" action="<?php echo site_url('/student/delete_network')?>">
 		<table class="table table-striped table-hover">
 			<!-- <caption>网络信息</caption> -->

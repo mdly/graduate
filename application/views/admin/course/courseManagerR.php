@@ -20,7 +20,7 @@
     </div>
     <div class="table-responsive">
         <div><br></div>
-        <div>
+        <div class="row">
             <form class="form-inline" method="post" action="<?php $operation='/admin/search_course/'.$activeTop; echo site_url($operation)?>"> 
                 <div class="col-xs-8">
                     <div class="input-group">
@@ -68,12 +68,12 @@
                                 switch ($data[$i]->Created) {
                                     case '0':
                                         $operationName = "发布课程";
-                                        $btnType = "class = 'btn btn-primary'";
+                                        $btnType = "class = 'btn btn-sm btn-primary'";
                                         $action = "/admin/course_push/".$data[$i]->CourseID;
                                         break;
                                     case '1':
                                         $operationName = "撤回课程";
-                                        $btnType = "class = 'btn btn-success'";
+                                        $btnType = "class = 'btn btn-sm btn-success'";
                                         $action = "/admin/course_pull/".$data[$i]->CourseID;
                                         break;
                                     default:break;
