@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
 	<div class="row col-xs-8">
 			<?php if($message){
 				echo "<div class='alert alert-warning alert-dismissible' role='alert'>

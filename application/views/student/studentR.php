@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
 	<table class="table table-striped table-hover">
         <thead>
             <tr>

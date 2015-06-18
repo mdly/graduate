@@ -35,7 +35,7 @@
 							</li>
 						</ul>
 					</div>
-					<div class="col-xs-10">
+					<div>
 						<div class="panel panel-default">
 							<div class="panel-heading">
 								<h3 class="panel-title">创建新课程类型</h3>

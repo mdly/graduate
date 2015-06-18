@@ -59,10 +59,10 @@ class ImageCrud extends CI_Model{
 	function read_courseImage_list($courseID,$isTarget="-1"){
 		//echo "courseID=".$courseID;
 		if($isTarget!="-1"){
-			$data=$this->db->select("*")->from("courseImage")->where("CourseID",$courseID)->where("isTarget",$isTarget)->get()->result();
+			$data=$this->db->select("*")->from("courseimage")->where("CourseID",$courseID)->where("isTarget",$isTarget)->get()->result();
 		}else{
-			$attackerImage = $this->db->select("*")->from("courseImage")->where("CourseID",$courseID)->where("isTarget",0)->get()->result();
-			$targetImage = $this->db->select("*")->from("courseImage")->where("CourseID",$courseID)->where("isTarget",1)->get()->result();
+			$attackerImage = $this->db->select("*")->from("courseimage")->where("CourseID",$courseID)->where("isTarget",0)->get()->result();
+			$targetImage = $this->db->select("*")->from("courseimage")->where("CourseID",$courseID)->where("isTarget",1)->get()->result();
 			$data = array("attackerImage"=>$attackerImage,"targetImage"=>$targetImage);
 		}
 		//print_r($data);
@@ -70,7 +70,7 @@ class ImageCrud extends CI_Model{
 	}
 	function add_courseImage($isTarget,$courseID,$imageID){
 		// print_r($imageID);
-		$data = $this->db->select("*")->from("courseImage")->where("CourseID",$courseID)->where("ImageID",$imageID)->where("isTarget",$isTarget)->get()->result();
+		$data = $this->db->select("*")->from("courseimage")->where("CourseID",$courseID)->where("ImageID",$imageID)->where("isTarget",$isTarget)->get()->result();
 		
 		if($data){
 			print_r($data);
@@ -85,7 +85,7 @@ print_r($image);
 		}
 	}
 	function delete_courseImage($isTarget,$courseID,$imageID){
-		$this->db->where("isTarget",$isTarget)->where("CourseID",$courseID)->where("ImageID",$imageID)->delete("courseImage");
+		$this->db->where("isTarget",$isTarget)->where("CourseID",$courseID)->where("ImageID",$imageID)->delete("courseimage");
 	}
 	function syc_openstack(){
 		$this->load->model("openstack");

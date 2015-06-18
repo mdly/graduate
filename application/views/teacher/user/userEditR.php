@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
     <div>
         <ul class="nav nav-tabs">
             <li role="presentation" name = "allUser" class="tag active"><a href="<?php echo site_url('/admin/show_user_list')?>">所有用户</a></li>

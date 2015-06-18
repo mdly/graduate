@@ -24,7 +24,7 @@
     </div>
     <div class="table-responsive">
         <div><br></div>
-        <div>
+        <div class="row">
             <form class="form-inline" method="post" action="<?php $operation='/admin/search_user/'.$activeTop; echo site_url($operation);?>"> 
                 <div class="col-xs-8">
                     <div class="input-group">

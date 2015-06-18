@@ -1,4 +1,4 @@
-<div class="col-xs-10">                        
+<div>                        
     <div>                               
         <ul class="nav nav-tabs">
             <?php 
@@ -61,17 +61,17 @@
                                 switch ($data[$i]->State) {
                                     case '0':
                                         $operationName = "开启课程";
-                                        $btnType = "class = 'btn btn-primary'";
+                                        $btnType = "class = 'btn btn-sm btn-primary'";
                                         $operation = "/teacher/start_course/".$data[$i]->CourseID;
                                         break;
                                     case '1':
                                         $operationName = "关闭课程";
-                                        $btnType = "class = 'btn btn-success'";
+                                        $btnType = "class = 'btn btn-sm btn-success'";
                                         $operation = "/teacher/stop_course/".$data[$i]->CourseID;
                                         break;
                                     default:
                                         $operationName = "查看课程";
-                                        $btnType = "class = 'btn btn-success'";
+                                        $btnType = "class = 'btn btn-sm btn-success'";
                                         $operation = "/teacher/show_course_detail/".$data[$i]->CourseID;
                                         break;
                                 }

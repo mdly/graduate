@@ -1,4 +1,4 @@
-<div class="col-xs-10">                        
+<div>                        
     <div>                               
         <ul class="nav nav-tabs">
             <?php 
@@ -60,12 +60,12 @@
                                 if ($selected[$i]<0) {
                                     // this course is not selected, then show the select button
                                     // $operationName
-                                    $action = "<a class='btn btn-primary'href=".
+                                    $action = "<a class='btn btn-sm btn-primary'href=".
                                         site_url("/student/select_course_action/".$data[$i]->CourseID).
                                         " role='button'>选择课程</a>";
                                 }else{
                                     // this course is selected, then disable the button
-                                    $action = "<a class='btn btn-default selected' href='#' role='button'>选择课程</a>";
+                                    $action = "<a class='btn btn-sm btn-default selected' href='#' role='button'>选择课程</a>";
                                 }
                                 echo "
                                     <tr style='cursor:pointer'>

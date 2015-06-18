@@ -21,7 +21,7 @@
                         <li role="presentation"<?php if($left==(0)) echo "class = 'active'";?>><a href="<?php echo site_url('/teacher/index');?>">系统概况</a></li>
                 
                         <li role="presentation"<?php if($left==(1)) echo "class = 'active'";?>><a href="<?php echo site_url('/teacher/course_manager');?>">我的课程</a></li>
-                        <li role="presentation"<?php if($left==(2)) echo "class = 'active'";?>><a href="<?php echo site_url('/teacher/student_manager');?>">我的学生</a></li>
+                        <!-- <li role="presentation"<?php if($left==(2)) echo "class = 'active'";?>><a href="<?php echo site_url('/teacher/student_manager');?>">我的学生</a></li> -->
                     </ul>
             </div>
             <div id="ad-main-container">

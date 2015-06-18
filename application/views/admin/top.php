@@ -25,7 +25,10 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="#">Brand</a>
+              <a class="navbar-brand" href="#">
+                <img src="<?php echo base_url('public/img/logo.png'); ?>" alt="">
+                攻防演练平台
+              </a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->

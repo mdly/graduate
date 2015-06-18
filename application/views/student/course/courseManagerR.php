@@ -1,4 +1,4 @@
-<div class="col-xs-10">                        
+<div>                        
     <div>                               
         <ul class="nav nav-tabs">
             <?php 
@@ -40,12 +40,12 @@
                             switch ($data[$i]->Created) {
                                 case '0':
                                     $operationName = "发布课程";
-                                    $btnType = "class = 'btn btn-primary'";
+                                    $btnType = "class = 'btn btn-sm btn-primary'";
                                     $action = "/student/course_push/".$data[$i]->CourseID;
                                     break;
                                 case '1':
                                     $operationName = "撤回课程";
-                                    $btnType = "class = 'btn btn-success'";
+                                    $btnType = "class = 'btn btn-sm btn-success'";
                                     $action = "/student/course_pull/".$data[$i]->CourseID;
                                     break;
                                 default:break;

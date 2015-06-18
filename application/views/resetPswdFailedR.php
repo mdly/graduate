@@ -1,4 +1,4 @@
-<div class="col-xs-10">
+<div>
     <div class="row col-xs-8">
         <form class="form-horizontal" method="post" action="<?php echo site_url('/general/check_pswd/admin')?>">
             <div class="alert alert-warning alert-dismissible" role="alert">
